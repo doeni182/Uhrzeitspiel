@@ -8,14 +8,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Uhrzeit">
-    <meta name="theme-color" id="themeColorMeta" content="#EDC3D4">
+    <meta name="theme-color" content="#3DDDE3">
     
     <style>
         :root {
-            --bg-day: #EDC3D4;    /* Altrose */
-            --bg-night: #C2D2E9;  /* Pastellblau */
+            --app-bg: #3DDDE3;     /* Fester Hintergrund */
+            --clock-day: #EDC3D4;  /* Altrose für Tagzeiten */
+            --clock-night: #C2D2E9;/* Pastellblau für Nachtzeiten */
             --text-title: #111111;
-            --text-sub: #3a3a3c;
+            --text-sub: #222222;
             --primary-blue: #007aff;
             --hand-hour: #007aff;
             --hand-minute: #ff3b30;
@@ -33,14 +34,12 @@
 
         html {
             height: 100%;
-            background-color: var(--bg-day);
-            transition: background-color 0.8s ease;
+            background-color: var(--app-bg);
         }
 
         body {
             height: 100dvh;
-            background-color: var(--bg-day);
-            transition: background-color 0.8s ease;
+            background-color: var(--app-bg);
             color: var(--text-title);
             display: flex;
             justify-content: center;
@@ -157,8 +156,8 @@
             margin-top: 4px;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            background: rgba(255, 255, 255, 0.55);
-            border: 1.5px solid rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.6);
+            border: 1.5px solid rgba(255, 255, 255, 0.85);
             color: var(--text-title);
         }
 
@@ -191,7 +190,7 @@
             justify-content: center;
             gap: 8px;
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            color: #48484a;
+            color: #333333;
             background: transparent;
         }
 
@@ -242,7 +241,7 @@
         .digital-label {
             font-size: 0.65rem;
             font-weight: 800;
-            color: #636366;
+            color: #444444;
             letter-spacing: 1.2px;
         }
 
@@ -268,8 +267,9 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), inset 0 0 0 1.5px rgba(255, 255, 255, 0.85);
+            background-color: var(--clock-day);
+            transition: background-color 0.6s ease;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12), inset 0 0 0 1.5px rgba(255, 255, 255, 0.85);
         }
 
         /* Stepper für Digitaluhr */
@@ -296,7 +296,7 @@
         .stepper-label {
             font-size: 0.7rem;
             font-weight: 700;
-            color: #48484a;
+            color: #333333;
         }
 
         .stepper-controls {
@@ -333,7 +333,7 @@
             text-align: center;
         }
 
-        /* --- PRÜFEN BUTTON MIT INTERNEM KONFETTI CANVAS --- */
+        /* Prüfen Button mit Konfetti Canvas */
         .check-btn {
             position: relative;
             width: 100%;
@@ -360,7 +360,6 @@
             border-color: rgba(52, 199, 89, 0.8);
         }
 
-        /* Konfetti Canvas exakt über die Buttonfläche gespannt */
         #btnConfettiCanvas {
             position: absolute;
             top: 0;
@@ -644,7 +643,7 @@
         fireEl.classList.add('fire-pop');
     }
 
-    // --- INTERNES BUTTON-KONFETTI SYSTEM ---
+    // --- Button-Konfetti ---
     const confettiColors = ['#ff3b30', '#007aff', '#34c759', '#ff9500', '#af52de', '#ffcc00', '#5856d6'];
 
     function triggerButtonConfetti() {
@@ -659,7 +658,7 @@
         const h = btnConfettiCanvas.height;
 
         confettiParticles = [];
-        const count = 48; // Anzahl Schnipsel
+        const count = 48;
 
         for (let i = 0; i < count; i++) {
             confettiParticles.push({
@@ -691,10 +690,10 @@
         confettiParticles.forEach(p => {
             p.x += p.vx;
             p.y += p.vy;
-            p.vy += 0.35; // Schwerkraft im Button
-            p.vx *= 0.96; // Reibung
+            p.vy += 0.35;
+            p.vx *= 0.96;
             p.rotation += p.rotSpeed;
-            p.opacity -= 0.016; // Sanftes Verblassen
+            p.opacity -= 0.016;
 
             if (p.opacity > 0) {
                 alive = true;
@@ -749,17 +748,10 @@
         return { text: "🌙 Nachts", isDay: false, speech: "in der Nacht" };
     }
 
-    function updateBackgroundColor(hour) {
+    // Ändert nur die Zifferblatt-Hintergrundfarbe (Tag: Altrose, Nacht: Pastellblau)
+    function updateClockFaceColor(hour) {
         const isDay = (hour >= 6 && hour < 18);
-        const hexColor = isDay ? '#EDC3D4' : '#C2D2E9';
-        
-        document.documentElement.style.backgroundColor = hexColor;
-        document.body.style.backgroundColor = hexColor;
-        
-        const themeMeta = document.getElementById('themeColorMeta');
-        if (themeMeta) {
-            themeMeta.setAttribute('content', hexColor);
-        }
+        canvas.style.backgroundColor = isDay ? 'var(--clock-day)' : 'var(--clock-night)';
     }
 
     function speak(text) {
@@ -795,7 +787,8 @@
         mode = Math.random() > 0.5 ? 'digitalToAnalog' : 'analogToDigital';
         currentHandStep = 'hour';
 
-        updateBackgroundColor(targetTime.hour);
+        // Zifferblatt-Farbe je nach Tag/Nacht setzen
+        updateClockFaceColor(targetTime.hour);
 
         if (mode === 'digitalToAnalog') {
             userTime = { hour: 12, minute: 0 };
@@ -811,7 +804,7 @@
         } else {
             userTime = { hour: 12, minute: 0 };
             document.getElementById('taskTitle').innerText = 'Wie spät ist es?';
-            document.getElementById('taskSub').innerText = 'Schau auf die Zeiger und die Tageszeit:';
+            document.getElementById('taskSub').innerText = 'Schau auf die Zeiger und das Zifferblatt:';
             document.getElementById('targetDigitalBox').style.display = 'none';
             document.getElementById('digitalInputGroup').style.display = 'flex';
             document.getElementById('handSwitcher').style.display = 'none';
@@ -930,7 +923,7 @@
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
                 ctx.lineWidth = is10Min ? 3.5 : 2;
-                ctx.strokeStyle = is10Min ? '#ff3b30' : '#8e8e93';
+                ctx.strokeStyle = is10Min ? '#ff3b30' : 'rgba(0, 0, 0, 0.35)';
                 ctx.lineCap = 'round';
                 ctx.stroke();
             } else {
@@ -940,7 +933,7 @@
 
                 ctx.beginPath();
                 ctx.arc(x, y, 1.8, 0, 2 * Math.PI);
-                ctx.fillStyle = 'rgba(142, 142, 147, 0.45)';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
                 ctx.fill();
             }
         }
