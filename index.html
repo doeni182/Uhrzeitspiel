@@ -83,10 +83,8 @@
             align-items: center;
             gap: 7px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-            position: relative;
         }
 
-        /* Feuer Emoji Animation bei Treffer */
         .fire-icon {
             display: inline-block;
             transform-origin: center bottom;
@@ -98,23 +96,11 @@
         }
 
         @keyframes firePop {
-            0% {
-                transform: scale(1);
-            }
-            30% {
-                transform: scale(2.1) rotate(-14deg);
-                filter: drop-shadow(0 0 10px rgba(255, 149, 0, 0.9));
-            }
-            55% {
-                transform: scale(1.8) rotate(14deg);
-            }
-            75% {
-                transform: scale(2.0) rotate(-6deg);
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-                filter: none;
-            }
+            0% { transform: scale(1); }
+            30% { transform: scale(2.1) rotate(-14deg); filter: drop-shadow(0 0 10px rgba(255, 149, 0, 0.9)); }
+            55% { transform: scale(1.8) rotate(14deg); }
+            75% { transform: scale(2.0) rotate(-6deg); }
+            100% { transform: scale(1) rotate(0deg); filter: none; }
         }
 
         .speaker-btn {
@@ -137,7 +123,7 @@
             transform: scale(0.92);
         }
 
-        /* Aufgabenkarten & Header */
+        /* Aufgabenkarten */
         .task-card {
             text-align: center;
             flex-shrink: 0;
@@ -157,7 +143,6 @@
             font-weight: 600;
         }
 
-        /* Tag / Nacht Badge */
         .daytime-badge {
             display: inline-flex;
             align-items: center;
@@ -174,14 +159,14 @@
             color: var(--text-title);
         }
 
-        /* NEU: Segemented Switcher für Zeigerauswahl */
+        /* Segmented Switcher */
         .hand-switcher {
             width: 100%;
             max-width: 330px;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.45);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
-            border: 1.5px solid rgba(255, 255, 255, 0.7);
+            border: 1.5px solid rgba(255, 255, 255, 0.75);
             border-radius: 18px;
             padding: 4px;
             display: flex;
@@ -212,7 +197,6 @@
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.5);
             box-shadow: 0 4px 14px rgba(0, 122, 255, 0.35);
-            animation: gentleGlowBlue 2.2s infinite alternate;
         }
 
         .hand-segment.active-minute {
@@ -220,7 +204,6 @@
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.5);
             box-shadow: 0 4px 14px rgba(255, 59, 48, 0.35);
-            animation: gentleGlowRed 2.2s infinite alternate;
         }
 
         .hand-dot {
@@ -230,27 +213,13 @@
             display: inline-block;
         }
 
-        .dot-hour {
-            background: #007aff;
-        }
-        .dot-minute {
-            background: #ff3b30;
-        }
+        .dot-hour { background: #007aff; }
+        .dot-minute { background: #ff3b30; }
 
         .hand-segment.active-hour .dot-hour,
         .hand-segment.active-minute .dot-minute {
             background: #ffffff;
             box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
-        }
-
-        @keyframes gentleGlowBlue {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.02); box-shadow: 0 6px 18px rgba(0, 122, 255, 0.45); }
-        }
-
-        @keyframes gentleGlowRed {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.02); box-shadow: 0 6px 18px rgba(255, 59, 48, 0.45); }
         }
 
         /* Digital Display Card */
@@ -285,8 +254,8 @@
         /* Uhr-Container */
         .clock-wrapper {
             position: relative;
-            width: min(60vw, 240px);
-            height: min(60vw, 240px);
+            width: min(65vw, 250px);
+            height: min(65vw, 250px);
             touch-action: none;
             flex-shrink: 0;
             margin: 2px 0;
@@ -296,7 +265,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.94);
+            background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), inset 0 0 0 1.5px rgba(255, 255, 255, 0.85);
         }
 
@@ -361,7 +330,7 @@
             text-align: center;
         }
 
-        /* Liquid Glass Prüfen Button */
+        /* Prüfen Button */
         .check-btn {
             position: relative;
             width: 100%;
@@ -380,18 +349,6 @@
             overflow: hidden;
             flex-shrink: 0;
             margin-bottom: 2px;
-        }
-
-        .check-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 45%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.05));
-            border-radius: 18px 18px 60px 60px;
-            pointer-events: none;
         }
 
         .check-btn:active {
@@ -494,7 +451,6 @@
         <div class="digital-time" id="digitalTargetTime">14:10</div>
     </div>
 
-    <!-- Prominente 2-Phasen Segmented-Leiste für Erstklässler -->
     <div class="hand-switcher" id="handSwitcher">
         <button class="hand-segment active-hour" id="segHour" onclick="selectHand('hour')">
             <span class="hand-dot dot-hour"></span>
@@ -552,7 +508,6 @@
     let targetTime = { hour: 12, minute: 0 };
     let userTime = { hour: 12, minute: 0 };
 
-    // --- Audio Feedback ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
@@ -649,11 +604,9 @@
         osc.stop(now + 0.03);
     }
 
-    // --- Feuer Emoji Rückkopplungs-Animation ---
     function triggerFireAnimation() {
         const fireEl = document.getElementById('fireEmoji');
         fireEl.classList.remove('fire-pop');
-        // Force Reflow
         void fireEl.offsetWidth;
         fireEl.classList.add('fire-pop');
     }
@@ -802,4 +755,199 @@
         let isCorrect = false;
         if (mode === 'digitalToAnalog') {
             const targetMod12 = targetTime.hour % 12;
-            const userMod12
+            const userMod12 = userTime.hour % 12;
+            isCorrect = (targetMod12 === userMod12 && targetTime.minute === userTime.minute);
+        } else {
+            isCorrect = (targetTime.hour === userTime.hour && targetTime.minute === userTime.minute);
+        }
+
+        if (isCorrect) {
+            streak++;
+            document.getElementById('streakCount').innerText = streak;
+            triggerFireAnimation();
+
+            if (streak % 3 === 0) {
+                show3erCelebration(streak);
+            } else {
+                playCorrectSound();
+                speak("Super gemacht!");
+                setTimeout(newRound, 1200);
+            }
+        } else {
+            streak = 0;
+            document.getElementById('streakCount').innerText = streak;
+            playWrongSound();
+            speak("Probier es noch einmal!");
+        }
+    }
+
+    function triggerFeedback() {
+        playTickSound();
+        if (navigator.vibrate) navigator.vibrate(10);
+    }
+
+    // --- Zifferblatt & Zeiger zeichnen (Exakte Polarkoordinaten) ---
+    function drawClock() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const cx = radius;
+        const cy = radius;
+
+        // 1. 60 Minuten-Indikatoren (Punkte & Striche)
+        for (let m = 0; m < 60; m++) {
+            const angle = (m * Math.PI) / 30 - Math.PI / 2;
+            const is5Min = (m % 5 === 0);
+            const is10Min = (m % 10 === 0);
+
+            if (is5Min) {
+                const rOuter = radius - 16;
+                const rInner = radius - 26;
+                const x1 = cx + Math.cos(angle) * rOuter;
+                const y1 = cy + Math.sin(angle) * rOuter;
+                const x2 = cx + Math.cos(angle) * rInner;
+                const y2 = cy + Math.sin(angle) * rInner;
+
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.lineWidth = is10Min ? 3.5 : 2;
+                ctx.strokeStyle = is10Min ? '#ff3b30' : '#8e8e93';
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            } else {
+                const rDot = radius - 21;
+                const x = cx + Math.cos(angle) * rDot;
+                const y = cy + Math.sin(angle) * rDot;
+
+                ctx.beginPath();
+                ctx.arc(x, y, 1.8, 0, 2 * Math.PI);
+                ctx.fillStyle = 'rgba(142, 142, 147, 0.45)';
+                ctx.fill();
+            }
+        }
+
+        // 2. 10er-Minutenzahlen (00, 10, 20, 30, 40, 50)
+        ctx.font = '700 16px -apple-system, BlinkMacSystemFont, "SF Pro Rounded", sans-serif';
+        ctx.fillStyle = '#ff3b30';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        [0, 10, 20, 30, 40, 50].forEach(min => {
+            const angle = (min * Math.PI) / 30 - Math.PI / 2;
+            const rText = radius - 40;
+            const x = cx + Math.cos(angle) * rText;
+            const y = cy + Math.sin(angle) * rText;
+            ctx.fillText(String(min).padStart(2, '0'), x, y);
+        });
+
+        // 3. Große Stundenzahlen (1 bis 12)
+        ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, "SF Pro Rounded", sans-serif';
+        ctx.fillStyle = '#111111';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        for (let num = 1; num <= 12; num++) {
+            const angle = (num * Math.PI) / 6 - Math.PI / 2;
+            const rHour = radius - 80;
+            const x = cx + Math.cos(angle) * rHour;
+            const y = cy + Math.sin(angle) * rHour;
+            ctx.fillText(num.toString(), x, y);
+        }
+
+        // 4. Zeigerwinkel ermitteln
+        const time = (mode === 'digitalToAnalog') ? userTime : targetTime;
+        const hourVal = (mode === 'digitalToAnalog' && currentHandStep === 'hour') 
+            ? (time.hour % 12) 
+            : (time.hour % 12) + (time.minute / 60);
+
+        const hourAngle = (hourVal * Math.PI / 6) - Math.PI / 2;
+        const minuteAngle = (time.minute * Math.PI / 30) - Math.PI / 2;
+
+        const isHourActive = (mode !== 'digitalToAnalog' || currentHandStep === 'hour');
+        const isMinuteActive = (mode !== 'digitalToAnalog' || currentHandStep === 'minute');
+
+        // Stundenzeiger (Blau)
+        drawHandDirect(cx, cy, hourAngle, radius * 0.46, isHourActive ? 14 : 9, isHourActive ? '#007aff' : 'rgba(0, 122, 255, 0.28)');
+        
+        // Minutenzeiger (Rot)
+        drawHandDirect(cx, cy, minuteAngle, radius * 0.72, isMinuteActive ? 9 : 5, isMinuteActive ? '#ff3b30' : 'rgba(255, 59, 48, 0.28)');
+
+        // Mittelpunkt-Kappe
+        ctx.beginPath();
+        ctx.arc(cx, cy, 11, 0, 2 * Math.PI);
+        ctx.fillStyle = '#111111';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+    }
+
+    function drawHandDirect(cx, cy, angle, length, width, color) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = color;
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(angle) * length, cy + Math.sin(angle) * length);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // --- Touch & Maus Interaktion ---
+    function handlePointer(e) {
+        initAudio();
+        if (mode !== 'digitalToAnalog') return;
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = clientX - (rect.left + rect.width / 2);
+        const y = clientY - (rect.top + rect.height / 2);
+        const dist = Math.sqrt(x * x + y * y);
+
+        if (dist < 18) return;
+
+        let angle = Math.atan2(y, x) * 180 / Math.PI + 90;
+        if (angle < 0) angle += 360;
+
+        if (currentHandStep === 'hour') {
+            let hour12 = Math.round(angle / 30);
+            if (hour12 === 0) hour12 = 12;
+            const isPM = targetTime.hour >= 12;
+            const newHour = (hour12 % 12) + (isPM ? 12 : 0);
+            
+            if (newHour !== userTime.hour) {
+                userTime.hour = newHour;
+                triggerFeedback();
+            }
+        } else {
+            let rawMinute = Math.round(angle / 6) % 60;
+            let snappedMin = Math.round(rawMinute / 10) * 10 % 60;
+            
+            if (snappedMin !== userTime.minute) {
+                userTime.minute = snappedMin;
+                triggerFeedback();
+            }
+        }
+        drawClock();
+    }
+
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handlePointer(e); }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handlePointer(e); }, { passive: false });
+    canvas.addEventListener('mousedown', (e) => {
+        handlePointer(e);
+        const move = (ev) => handlePointer(ev);
+        const up = () => {
+            window.removeEventListener('mousemove', move);
+            window.removeEventListener('mouseup', up);
+        };
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', up);
+    });
+
+    newRound();
+</script>
+</body>
+</html>
