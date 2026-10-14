@@ -12,13 +12,13 @@
     
     <style>
         :root {
-            --app-bg: #E2F7F8;       /* Neue Hintergrundfarbe */
-            --clock-day: #FAE7E2;    /* Warmes Helles Pastell für Tagzeiten */
-            --clock-night: #C2D2E9;  /* Pastellblau für Nachtzeiten */
+            --app-bg: #E2F7F8;
+            --clock-day: #FAE7E2;
+            --clock-night: #C2D2E9;
             --text-title: #111111;
-            --text-sub: #222222;
-            --hand-hour: #4F05F8;    /* Lila Stundenzeiger */
-            --hand-minute: #DEC0DF;  /* Flieder/Rosa Minutenzeiger */
+            --text-sub: #333333;
+            --hand-hour: #4F05F8;
+            --hand-minute: #DEC0DF;
         }
 
         * {
@@ -124,46 +124,37 @@
             transform: scale(0.92);
         }
 
-        /* Aufgabenkarten */
+        /* Überschriften linksbündig */
         .task-card {
-            text-align: center;
+            width: 100%;
+            max-width: 320px;
+            text-align: left;
             flex-shrink: 0;
+            padding-left: 2px;
         }
 
         .task-title {
-            font-size: 1.35rem;
+            font-size: 1.45rem;
             font-weight: 800;
             color: var(--text-title);
-            letter-spacing: -0.2px;
+            letter-spacing: -0.3px;
         }
 
         .task-subtitle {
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             color: var(--text-sub);
-            margin-top: 2px;
+            margin-top: 3px;
             font-weight: 600;
         }
 
-        .daytime-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 14px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            margin-top: 4px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            background: rgba(255, 255, 255, 0.6);
-            border: 1.5px solid rgba(255, 255, 255, 0.85);
-            color: var(--text-title);
+        /* Einheitliche Breite für Kontroll- & Displayelemente */
+        .ui-fixed-width {
+            width: 100%;
+            max-width: 320px;
         }
 
-        /* Segmented Switcher */
+        /* Segmented Switcher für Zeiger */
         .hand-switcher {
-            width: 100%;
-            max-width: 330px;
             background: rgba(255, 255, 255, 0.45);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
@@ -237,7 +228,6 @@
             padding: 6px 20px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.85);
             text-align: center;
-            width: 70%;
             flex-shrink: 0;
         }
 
@@ -290,6 +280,7 @@
         }
 
         .stepper-group {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -305,17 +296,17 @@
         .stepper-controls {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .step-btn {
             background: rgba(255, 255, 255, 0.65);
             border: 1px solid rgba(255, 255, 255, 0.8);
             color: var(--text-title);
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
@@ -332,14 +323,13 @@
             font-size: 1rem;
             font-weight: 800;
             color: #000000;
-            width: 40px;
+            width: 42px;
             text-align: center;
         }
 
-        /* Prüfen Button mit Konfetti Canvas & Shake-Animation */
+        /* Prüfen Button - Gleiche Breite wie der Einstellbereich */
         .check-btn {
             position: relative;
-            width: 100%;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.35) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -476,21 +466,19 @@
         </button>
     </div>
 
+    <!-- Linksbündige Titel -->
     <div class="task-card">
         <div class="task-title" id="taskTitle">Stelle die Uhr!</div>
         <div class="task-subtitle" id="taskSub">Wähle einen Zeiger und drehe ihn.</div>
-
-        <div id="daytimeBadgeWrapper" style="display: none;">
-            <div class="daytime-badge" id="daytimeBadge">☀️ Vormittag / Tag</div>
-        </div>
     </div>
 
-    <div class="digital-box" id="targetDigitalBox">
+    <div class="digital-box ui-fixed-width" id="targetDigitalBox">
         <div class="digital-label">ZIELZEIT</div>
         <div class="digital-time" id="digitalTargetTime">14:10</div>
     </div>
 
-    <div class="hand-switcher" id="handSwitcher">
+    <!-- Segmented Switcher (genau gleiche Breite wie der Button) -->
+    <div class="hand-switcher ui-fixed-width" id="handSwitcher">
         <button class="hand-segment active-hour" id="segHour" onclick="selectHand('hour')">
             <span class="hand-dot dot-hour"></span>
             <span>1. Stunde (Lila)</span>
@@ -505,7 +493,8 @@
         <canvas id="clockCanvas" width="560" height="560"></canvas>
     </div>
 
-    <div class="stepper-container" id="digitalInputGroup" style="display: none;">
+    <!-- Stepper für Digitaluhr (gleiche Breite) -->
+    <div class="stepper-container ui-fixed-width" id="digitalInputGroup" style="display: none;">
         <div class="stepper-group">
             <span class="stepper-label">Stunde (0–23)</span>
             <div class="stepper-controls">
@@ -525,7 +514,8 @@
         </div>
     </div>
 
-    <button class="check-btn" id="checkButton" onclick="checkAnswer()">
+    <!-- Prüfen Button (gleiche Breite) -->
+    <button class="check-btn ui-fixed-width" id="checkButton" onclick="checkAnswer()">
         <canvas id="btnConfettiCanvas"></canvas>
         <span class="check-btn-text" id="checkButtonText">Prüfen ✓</span>
     </button>
@@ -659,7 +649,6 @@
         fireEl.classList.add('fire-pop');
     }
 
-    // --- Button Fehler-Animation ---
     function triggerButtonError() {
         const btn = document.getElementById('checkButton');
         btn.classList.remove('error-shake');
@@ -770,7 +759,7 @@
     }
 
     function getDaytimeDescriptor(hour) {
-        if (hour >= 6 && hour < 12) return { text: "☀️ Morgens / Vormittag", isDay: true, speech: "am Vormittag" };
+        if (hour >= 6 && hour < 12) return { text: "☀️ Morgens", isDay: true, speech: "am Vormittag" };
         if (hour >= 12 && hour < 18) return { text: "☀️ Nachmittag", isDay: true, speech: "am Nachmittag" };
         if (hour >= 18 && hour < 22) return { text: "🌙 Abends", isDay: false, speech: "am Abend" };
         return { text: "🌙 Nachts", isDay: false, speech: "in der Nacht" };
@@ -823,7 +812,6 @@
             document.getElementById('targetDigitalBox').style.display = 'block';
             document.getElementById('digitalInputGroup').style.display = 'none';
             document.getElementById('handSwitcher').style.display = 'flex';
-            document.getElementById('daytimeBadgeWrapper').style.display = 'none';
             document.getElementById('digitalTargetTime').innerText = 
                 `${String(targetTime.hour).padStart(2,'0')}:${String(targetTime.minute).padStart(2,'0')}`;
             updateHandSwitcherUI();
@@ -834,11 +822,6 @@
             document.getElementById('targetDigitalBox').style.display = 'none';
             document.getElementById('digitalInputGroup').style.display = 'flex';
             document.getElementById('handSwitcher').style.display = 'none';
-            document.getElementById('daytimeBadgeWrapper').style.display = 'block';
-
-            const desc = getDaytimeDescriptor(targetTime.hour);
-            const badge = document.getElementById('daytimeBadge');
-            badge.innerText = desc.text;
 
             updateStepperUI();
         }
@@ -926,13 +909,128 @@
         if (navigator.vibrate) navigator.vibrate(10);
     }
 
+    // --- GROSSES HANDGEZEICHNETES DOODLE ZEICHNEN (Hintergrund Zifferblatt) ---
+    function drawDoodleBackground(cx, cy, hour) {
+        const isDay = (hour >= 6 && hour < 18);
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        if (isDay) {
+            // --- DOODLE SONNE ---
+            const sunR = 64;
+            const sunColor = 'rgba(255, 179, 71, 0.38)';
+            const rayColor = 'rgba(255, 153, 51, 0.32)';
+
+            // Sonnenstrahlen als handgemalte Wellen/Striche
+            ctx.strokeStyle = rayColor;
+            ctx.lineWidth = 4;
+            for (let i = 0; i < 12; i++) {
+                const ang = (i * Math.PI) / 6;
+                const r1 = sunR + 10;
+                const r2 = sunR + 26 + (i % 2 === 0 ? 8 : 0);
+                
+                ctx.beginPath();
+                ctx.moveTo(cx + Math.cos(ang) * r1, cy + Math.sin(ang) * r1);
+                // Leichte Krümmung für handgemalten Doodle-Look
+                const cpX = cx + Math.cos(ang + 0.1) * (r1 + 10);
+                const cpY = cy + Math.sin(ang + 0.1) * (r1 + 10);
+                ctx.quadraticCurveTo(cpX, cpY, cx + Math.cos(ang) * r2, cy + Math.sin(ang) * r2);
+                ctx.stroke();
+            }
+
+            // Sonnen-Kreis
+            ctx.fillStyle = sunColor;
+            ctx.beginPath();
+            ctx.arc(cx, cy, sunR, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Doodle-Augen
+            ctx.strokeStyle = 'rgba(120, 60, 10, 0.28)';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            ctx.arc(cx - 24, cy - 14, 6, 0, Math.PI); // linkes Zwinkerauge
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cx + 24, cy - 14, 6, 0, Math.PI); // rechtes Zwinkerauge
+            ctx.stroke();
+
+            // Fröhliches Doodle-Lächeln
+            ctx.beginPath();
+            ctx.arc(cx, cy + 2, 22, 0.15 * Math.PI, 0.85 * Math.PI);
+            ctx.stroke();
+
+            // Rosa Doodle-Wangen
+            ctx.fillStyle = 'rgba(255, 105, 180, 0.25)';
+            ctx.beginPath();
+            ctx.arc(cx - 32, cy + 8, 7, 0, 2 * Math.PI);
+            ctx.arc(cx + 32, cy + 8, 7, 0, 2 * Math.PI);
+            ctx.fill();
+
+        } else {
+            // --- DOODLE MOND & STERNE ---
+            const moonColor = 'rgba(255, 225, 110, 0.42)';
+            const starColor = 'rgba(255, 235, 150, 0.45)';
+
+            // Funkelnde Doodle-Sterne im Hintergrund
+            function drawDoodleStar(sx, sy, size) {
+                ctx.strokeStyle = starColor;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(sx - size, sy);
+                ctx.lineTo(sx + size, sy);
+                ctx.moveTo(sx, sy - size);
+                ctx.lineTo(sx, sy + size);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(sx, sy, size * 0.35, 0, 2 * Math.PI);
+                ctx.fillStyle = starColor;
+                ctx.fill();
+            }
+
+            drawDoodleStar(cx - 65, cy - 50, 9);
+            drawDoodleStar(cx + 70, cy - 42, 11);
+            drawDoodleStar(cx - 50, cy + 55, 8);
+            drawDoodleStar(cx + 60, cy + 50, 10);
+
+            // Mondsichel (Organisch gezeichnet)
+            ctx.fillStyle = moonColor;
+            ctx.beginPath();
+            ctx.arc(cx - 6, cy, 62, -0.45 * Math.PI, 0.55 * Math.PI, false);
+            ctx.quadraticCurveTo(cx + 35, cy, cx - 6 + 62 * Math.cos(-0.45 * Math.PI), cy + 62 * Math.sin(-0.45 * Math.PI));
+            ctx.fill();
+
+            // Schlafendes Auge auf dem Mond
+            ctx.strokeStyle = 'rgba(50, 60, 110, 0.35)';
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            ctx.arc(cx + 20, cy - 12, 7, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.stroke();
+
+            // Sanfte Schlafwange
+            ctx.fillStyle = 'rgba(255, 140, 160, 0.25)';
+            ctx.beginPath();
+            ctx.arc(cx + 18, cy + 4, 6, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        ctx.restore();
+    }
+
+    // --- Zifferblatt & Zeiger zeichnen ---
     function drawClock() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         const cx = radius;
         const cy = radius;
+        const time = (mode === 'digitalToAnalog') ? userTime : targetTime;
 
-        // 1. 60 Minuten-Indikatoren
+        // 1. Großes Doodle im Hintergrund des Zifferblatts zeichnen
+        drawDoodleBackground(cx, cy, targetTime.hour);
+
+        // 2. 60 Minuten-Indikatoren
         for (let m = 0; m < 60; m++) {
             const angle = (m * Math.PI) / 30 - Math.PI / 2;
             const is5Min = (m % 5 === 0);
@@ -965,7 +1063,7 @@
             }
         }
 
-        // 2. 10er-Minutenzahlen
+        // 3. 10er-Minutenzahlen
         ctx.font = '800 16px -apple-system, BlinkMacSystemFont, "SF Pro Rounded", sans-serif';
         ctx.fillStyle = '#8a508c';
         ctx.textAlign = 'center';
@@ -979,7 +1077,7 @@
             ctx.fillText(String(min).padStart(2, '0'), x, y);
         });
 
-        // 3. Stundenzahlen
+        // 4. Stundenzahlen
         ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, "SF Pro Rounded", sans-serif';
         ctx.fillStyle = '#111111';
         ctx.textAlign = 'center';
@@ -993,8 +1091,7 @@
             ctx.fillText(num.toString(), x, y);
         }
 
-        // 4. Zeigerwinkel
-        const time = (mode === 'digitalToAnalog') ? userTime : targetTime;
+        // 5. Zeigerwinkel
         const hourVal = (mode === 'digitalToAnalog' && currentHandStep === 'hour') 
             ? (time.hour % 12) 
             : (time.hour % 12) + (time.minute / 60);
@@ -1008,7 +1105,7 @@
         // Stundenzeiger (Lila #4F05F8)
         drawHandDirect(cx, cy, hourAngle, radius * 0.46, isHourActive ? 14 : 9, isHourActive ? '#4F05F8' : 'rgba(79, 5, 248, 0.28)');
         
-        // Minutenzeiger (Flieder #DEC0DF mit dunkler Kontur)
+        // Minutenzeiger (Flieder #DEC0DF mit Kontur)
         drawHandDirect(cx, cy, minuteAngle, radius * 0.72, isMinuteActive ? 10 : 6, isMinuteActive ? '#DEC0DF' : 'rgba(222, 192, 223, 0.35)', isMinuteActive ? '#8a508c' : 'transparent');
 
         // Mittelpunkt
