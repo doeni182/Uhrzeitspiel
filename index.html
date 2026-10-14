@@ -57,7 +57,7 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         /* Top Bar */
@@ -70,26 +70,58 @@
         }
 
         .streak-badge {
-            background: rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.55);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1.5px solid rgba(255, 255, 255, 0.75);
             color: #d97706;
             font-weight: 800;
-            font-size: 1rem;
-            padding: 5px 12px;
-            border-radius: 18px;
+            font-size: 1.05rem;
+            padding: 6px 14px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            gap: 7px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        /* Feuer Emoji Animation bei Treffer */
+        .fire-icon {
+            display: inline-block;
+            transform-origin: center bottom;
+            font-size: 1.25rem;
+        }
+
+        .fire-pop {
+            animation: firePop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes firePop {
+            0% {
+                transform: scale(1);
+            }
+            30% {
+                transform: scale(2.1) rotate(-14deg);
+                filter: drop-shadow(0 0 10px rgba(255, 149, 0, 0.9));
+            }
+            55% {
+                transform: scale(1.8) rotate(14deg);
+            }
+            75% {
+                transform: scale(2.0) rotate(-6deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                filter: none;
+            }
         }
 
         .speaker-btn {
-            background: rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.55);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1.5px solid rgba(255, 255, 255, 0.75);
             color: var(--text-title);
             width: 38px;
             height: 38px;
@@ -98,14 +130,14 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
         }
 
         .speaker-btn:active {
             transform: scale(0.92);
         }
 
-        /* Titel & Aufgabenstellung */
+        /* Aufgabenkarten & Header */
         .task-card {
             text-align: center;
             flex-shrink: 0;
@@ -119,7 +151,7 @@
         }
 
         .task-subtitle {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--text-sub);
             margin-top: 2px;
             font-weight: 600;
@@ -137,44 +169,99 @@
             margin-top: 4px;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.55);
+            border: 1.5px solid rgba(255, 255, 255, 0.8);
             color: var(--text-title);
         }
 
-        /* Zeiger-Schritt-Pille */
-        .step-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 14px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            margin-top: 4px;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-        .step-pill.hour-phase {
-            background: rgba(0, 122, 255, 0.18);
-            color: #0056b3;
-            border: 1px solid rgba(0, 122, 255, 0.35);
-        }
-        .step-pill.minute-phase {
-            background: rgba(255, 59, 48, 0.18);
-            color: #c92a2a;
-            border: 1px solid rgba(255, 59, 48, 0.35);
-        }
-
-        /* Digital Display Card (Heller Liquid-Glass Look) */
-        .digital-box {
-            background: rgba(255, 255, 255, 0.42);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        /* NEU: Segemented Switcher für Zeigerauswahl */
+        .hand-switcher {
+            width: 100%;
+            max-width: 330px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             border: 1.5px solid rgba(255, 255, 255, 0.7);
             border-radius: 18px;
+            padding: 4px;
+            display: flex;
+            gap: 6px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+            flex-shrink: 0;
+        }
+
+        .hand-segment {
+            flex: 1;
+            padding: 9px 8px;
+            border-radius: 14px;
+            border: 1px solid transparent;
+            font-size: 0.88rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            color: #48484a;
+            background: transparent;
+        }
+
+        .hand-segment.active-hour {
+            background: linear-gradient(135deg, #007aff 0%, #0056b3 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 14px rgba(0, 122, 255, 0.35);
+            animation: gentleGlowBlue 2.2s infinite alternate;
+        }
+
+        .hand-segment.active-minute {
+            background: linear-gradient(135deg, #ff3b30 0%, #d70015 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 14px rgba(255, 59, 48, 0.35);
+            animation: gentleGlowRed 2.2s infinite alternate;
+        }
+
+        .hand-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-hour {
+            background: #007aff;
+        }
+        .dot-minute {
+            background: #ff3b30;
+        }
+
+        .hand-segment.active-hour .dot-hour,
+        .hand-segment.active-minute .dot-minute {
+            background: #ffffff;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+        }
+
+        @keyframes gentleGlowBlue {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); box-shadow: 0 6px 18px rgba(0, 122, 255, 0.45); }
+        }
+
+        @keyframes gentleGlowRed {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); box-shadow: 0 6px 18px rgba(255, 59, 48, 0.45); }
+        }
+
+        /* Digital Display Card */
+        .digital-box {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1.5px solid rgba(255, 255, 255, 0.75);
+            border-radius: 18px;
             padding: 6px 20px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.85);
             text-align: center;
             width: 70%;
             flex-shrink: 0;
@@ -195,7 +282,7 @@
             font-family: "SF Mono", Menlo, monospace;
         }
 
-        /* Uhr-Container (Höhenadaptiv für kleine Displays) */
+        /* Uhr-Container */
         .clock-wrapper {
             position: relative;
             width: min(60vw, 240px);
@@ -210,33 +297,10 @@
             height: 100%;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.94);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), inset 0 0 0 1.5px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), inset 0 0 0 1.5px rgba(255, 255, 255, 0.85);
         }
 
-        /* Umschalt-Knopf */
-        .switch-hand-btn {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.75);
-            color: var(--text-title);
-            padding: 6px 16px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
-
-        .switch-hand-btn:active {
-            transform: scale(0.96);
-        }
-
-        /* Stepper für Digitaluhr-Eingabe */
+        /* Stepper für Digitaluhr */
         .stepper-container {
             display: flex;
             gap: 14px;
@@ -297,11 +361,11 @@
             text-align: center;
         }
 
-        /* --- LIQUID GLASS PRÜFEN BUTTON --- */
+        /* Liquid Glass Prüfen Button */
         .check-btn {
             position: relative;
             width: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.3) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.35) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             color: #000000;
@@ -309,11 +373,9 @@
             border-top: 2px solid #ffffff;
             font-size: 1.15rem;
             font-weight: 800;
-            padding: 14px;
+            padding: 13px;
             border-radius: 18px;
-            box-shadow: 
-                0 10px 24px rgba(0, 0, 0, 0.08),
-                inset 0 1px 1px rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.9);
             cursor: pointer;
             overflow: hidden;
             flex-shrink: 0;
@@ -334,10 +396,10 @@
 
         .check-btn:active {
             transform: scale(0.98);
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.8);
         }
 
-        /* --- LIQUID GLASS FEIER OVERLAY --- */
+        /* Feier Overlay */
         .celebration-overlay {
             position: fixed;
             top: 0;
@@ -362,7 +424,7 @@
         }
 
         .celebration-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.45) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.5) 100%);
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
             border: 2px solid rgba(255, 255, 255, 0.9);
@@ -409,7 +471,7 @@
 <div class="container">
     <div class="header">
         <div class="streak-badge">
-            <span>🔥</span> <span id="streakCount">0</span>
+            <span class="fire-icon" id="fireEmoji">🔥</span> <span id="streakCount">0</span>
         </div>
         <button class="speaker-btn" onclick="speakTask()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -420,14 +482,10 @@
 
     <div class="task-card">
         <div class="task-title" id="taskTitle">Stelle die Uhr!</div>
-        <div class="task-subtitle" id="taskSub">Bewege zuerst den blauen Stundenzeiger.</div>
+        <div class="task-subtitle" id="taskSub">Wähle einen Zeiger und drehe ihn.</div>
 
         <div id="daytimeBadgeWrapper" style="display: none;">
             <div class="daytime-badge" id="daytimeBadge">☀️ Vormittag / Tag</div>
-        </div>
-
-        <div id="stepPillWrapper">
-            <span class="step-pill hour-phase" id="stepPill">1. Blauer Zeiger (Stunde)</span>
         </div>
     </div>
 
@@ -436,13 +494,21 @@
         <div class="digital-time" id="digitalTargetTime">14:10</div>
     </div>
 
+    <!-- Prominente 2-Phasen Segmented-Leiste für Erstklässler -->
+    <div class="hand-switcher" id="handSwitcher">
+        <button class="hand-segment active-hour" id="segHour" onclick="selectHand('hour')">
+            <span class="hand-dot dot-hour"></span>
+            <span>1. Stunde (Blau)</span>
+        </button>
+        <button class="hand-segment" id="segMinute" onclick="selectHand('minute')">
+            <span class="hand-dot dot-minute"></span>
+            <span>2. Minute (Rot)</span>
+        </button>
+    </div>
+
     <div class="clock-wrapper">
         <canvas id="clockCanvas" width="560" height="560"></canvas>
     </div>
-
-    <button class="switch-hand-btn" id="switchHandBtn" onclick="toggleHandStep()">
-        ➡️ Weiter zum roten Zeiger (Minute)
-    </button>
 
     <div class="stepper-container" id="digitalInputGroup" style="display: none;">
         <div class="stepper-group">
@@ -486,7 +552,7 @@
     let targetTime = { hour: 12, minute: 0 };
     let userTime = { hour: 12, minute: 0 };
 
-    // --- Web Audio API ---
+    // --- Audio Feedback ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
@@ -583,6 +649,15 @@
         osc.stop(now + 0.03);
     }
 
+    // --- Feuer Emoji Rückkopplungs-Animation ---
+    function triggerFireAnimation() {
+        const fireEl = document.getElementById('fireEmoji');
+        fireEl.classList.remove('fire-pop');
+        // Force Reflow
+        void fireEl.offsetWidth;
+        fireEl.classList.add('fire-pop');
+    }
+
     const partyEmojis = ['🥳', '🚀', '🦁', '🦄', '🦖', '🏆', '🎉', '🌟'];
 
     function show3erCelebration(currentStreak) {
@@ -648,29 +723,26 @@
         mode = Math.random() > 0.5 ? 'digitalToAnalog' : 'analogToDigital';
         currentHandStep = 'hour';
 
-        // Hintergrundfarbe basierend auf Zielzeit setzen
         updateBackgroundColor(targetTime.hour);
 
         if (mode === 'digitalToAnalog') {
             userTime = { hour: 12, minute: 0 };
             document.getElementById('taskTitle').innerText = 'Stelle die Uhr!';
-            document.getElementById('taskSub').innerText = 'Bewege zuerst den blauen Stundenzeiger.';
+            document.getElementById('taskSub').innerText = 'Drehe zuerst den blauen Stundenzeiger.';
             document.getElementById('targetDigitalBox').style.display = 'block';
             document.getElementById('digitalInputGroup').style.display = 'none';
-            document.getElementById('stepPillWrapper').style.display = 'block';
-            document.getElementById('switchHandBtn').style.display = 'flex';
+            document.getElementById('handSwitcher').style.display = 'flex';
             document.getElementById('daytimeBadgeWrapper').style.display = 'none';
             document.getElementById('digitalTargetTime').innerText = 
                 `${String(targetTime.hour).padStart(2,'0')}:${String(targetTime.minute).padStart(2,'0')}`;
-            updateStepPillUI();
+            updateHandSwitcherUI();
         } else {
             userTime = { hour: 12, minute: 0 };
             document.getElementById('taskTitle').innerText = 'Wie spät ist es?';
             document.getElementById('taskSub').innerText = 'Schau auf die Zeiger und die Tageszeit:';
             document.getElementById('targetDigitalBox').style.display = 'none';
             document.getElementById('digitalInputGroup').style.display = 'flex';
-            document.getElementById('stepPillWrapper').style.display = 'none';
-            document.getElementById('switchHandBtn').style.display = 'none';
+            document.getElementById('handSwitcher').style.display = 'none';
             document.getElementById('daytimeBadgeWrapper').style.display = 'block';
 
             const desc = getDaytimeDescriptor(targetTime.hour);
@@ -684,30 +756,28 @@
         setTimeout(speakTask, 350);
     }
 
-    function toggleHandStep() {
+    function selectHand(hand) {
         initAudio();
-        currentHandStep = (currentHandStep === 'hour') ? 'minute' : 'hour';
-        updateStepPillUI();
+        currentHandStep = hand;
+        updateHandSwitcherUI();
         drawClock();
         speakTask();
         triggerFeedback();
     }
 
-    function updateStepPillUI() {
-        const pill = document.getElementById('stepPill');
+    function updateHandSwitcherUI() {
+        const segH = document.getElementById('segHour');
+        const segM = document.getElementById('segMinute');
         const sub = document.getElementById('taskSub');
-        const toggleBtn = document.getElementById('switchHandBtn');
 
         if (currentHandStep === 'hour') {
-            pill.className = 'step-pill hour-phase';
-            pill.innerText = '1. Blauer Zeiger (Stunde)';
-            sub.innerText = 'Bewege den blauen Stundenzeiger.';
-            toggleBtn.innerText = '➡️ Weiter zum roten Zeiger (Minute)';
+            segH.className = 'hand-segment active-hour';
+            segM.className = 'hand-segment';
+            sub.innerText = 'Drehe den blauen Stundenzeiger zur richtigen Zahl.';
         } else {
-            pill.className = 'step-pill minute-phase';
-            pill.innerText = '2. Roter Zeiger (Minute)';
-            sub.innerText = 'Bewege den roten Minutenzeiger in 10er-Schritten.';
-            toggleBtn.innerText = '⬅️ Zurück zum blauen Zeiger';
+            segH.className = 'hand-segment';
+            segM.className = 'hand-segment active-minute';
+            sub.innerText = 'Drehe den roten Minutenzeiger in 10er-Schritten.';
         }
     }
 
@@ -732,183 +802,4 @@
         let isCorrect = false;
         if (mode === 'digitalToAnalog') {
             const targetMod12 = targetTime.hour % 12;
-            const userMod12 = userTime.hour % 12;
-            isCorrect = (targetMod12 === userMod12 && targetTime.minute === userTime.minute);
-        } else {
-            isCorrect = (targetTime.hour === userTime.hour && targetTime.minute === userTime.minute);
-        }
-
-        if (isCorrect) {
-            streak++;
-            document.getElementById('streakCount').innerText = streak;
-
-            if (streak % 3 === 0) {
-                show3erCelebration(streak);
-            } else {
-                playCorrectSound();
-                speak("Super gemacht!");
-                setTimeout(newRound, 1200);
-            }
-        } else {
-            streak = 0;
-            document.getElementById('streakCount').innerText = streak;
-            playWrongSound();
-            speak("Probier es noch einmal!");
-        }
-    }
-
-    function triggerFeedback() {
-        playTickSound();
-        if (navigator.vibrate) navigator.vibrate(10);
-    }
-
-    // --- Zifferblatt & Zeiger zeichnen ---
-    function drawClock() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.save();
-        ctx.translate(radius, radius);
-
-        // 1. Äußerer Ring: 60 Minuten-Punkte & Teilstriche
-        for (let m = 0; m < 60; m++) {
-            ctx.save();
-            ctx.rotate((m * Math.PI) / 30);
-
-            if (m % 5 === 0) {
-                ctx.beginPath();
-                ctx.rect(-1.5, -radius + 14, 3, 8);
-                ctx.fillStyle = (m % 10 === 0) ? '#ff3b30' : '#8e8e93';
-                ctx.fill();
-            } else {
-                ctx.beginPath();
-                ctx.arc(0, -radius + 18, 1.5, 0, 2 * Math.PI);
-                ctx.fillStyle = 'rgba(142, 142, 147, 0.45)';
-                ctx.fill();
-            }
-            ctx.restore();
-        }
-
-        // 2. Dezente 10er-Minuten-Zahlen (00, 10, 20, 30, 40, 50)
-        ctx.font = '600 17px -apple-system, BlinkMacSystemFont, "SF Pro Rounded", sans-serif';
-        ctx.fillStyle = '#ff3b30';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        
-        [0, 10, 20, 30, 40, 50].forEach(min => {
-            const ang = (min * Math.PI) / 30;
-            ctx.rotate(ang);
-            ctx.translate(0, -radius + 34);
-            ctx.rotate(-ang);
-            ctx.fillText(String(min).padStart(2, '0'), 0, 0);
-            ctx.rotate(ang);
-            ctx.translate(0, radius - 34);
-            ctx.rotate(-ang);
-        });
-
-        // 3. Stundenzahlen 1 bis 12
-        ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, "SF Pro Rounded", sans-serif';
-        ctx.fillStyle = '#111111';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        for (let num = 1; num <= 12; num++) {
-            const ang = (num * Math.PI) / 6;
-            ctx.rotate(ang);
-            ctx.translate(0, -radius + 76);
-            ctx.rotate(-ang);
-            ctx.fillText(num.toString(), 0, 0);
-            ctx.rotate(ang);
-            ctx.translate(0, radius - 76);
-            ctx.rotate(-ang);
-        }
-
-        const time = (mode === 'digitalToAnalog') ? userTime : targetTime;
-        const hourVal = (mode === 'digitalToAnalog' && currentHandStep === 'hour') 
-            ? (time.hour % 12) 
-            : (time.hour % 12) + (time.minute / 60);
-
-        const hourAngle = hourVal * Math.PI / 6;
-        const minuteAngle = time.minute * Math.PI / 30;
-
-        const hourAlpha = (mode === 'digitalToAnalog' && currentHandStep === 'minute') ? 0.35 : 1.0;
-        const minuteAlpha = (mode === 'digitalToAnalog' && currentHandStep === 'hour') ? 0.30 : 1.0;
-
-        // Stundenzeiger (Blau)
-        drawHand(hourAngle, radius * 0.48, 13, `rgba(0, 122, 255, ${hourAlpha})`);
-        // Minutenzeiger (Rot)
-        drawHand(minuteAngle, radius * 0.74, 8, `rgba(255, 59, 48, ${minuteAlpha})`);
-
-        // Mittelpunkt
-        ctx.beginPath();
-        ctx.arc(0, 0, 11, 0, 2 * Math.PI);
-        ctx.fillStyle = '#111111';
-        ctx.fill();
-
-        ctx.restore();
-    }
-
-    function drawHand(angle, length, width, color) {
-        ctx.save();
-        ctx.rotate(angle);
-        ctx.beginPath();
-        ctx.lineWidth = width;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = color;
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, -length);
-        ctx.stroke();
-        ctx.restore();
-    }
-
-    function handlePointer(e) {
-        initAudio();
-        if (mode !== 'digitalToAnalog') return;
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        const x = clientX - (rect.left + rect.width / 2);
-        const y = clientY - (rect.top + rect.height / 2);
-        const dist = Math.sqrt(x*x + y*y);
-
-        if (dist < 20) return;
-
-        let angle = Math.atan2(y, x) * 180 / Math.PI + 90;
-        if (angle < 0) angle += 360;
-
-        if (currentHandStep === 'hour') {
-            let hour12 = Math.round(angle / 30);
-            if (hour12 === 0) hour12 = 12;
-            const isPM = targetTime.hour >= 12;
-            const newHour = (hour12 % 12) + (isPM ? 12 : 0);
-            
-            if (newHour !== userTime.hour) {
-                userTime.hour = newHour;
-                triggerFeedback();
-            }
-        } else {
-            let rawMinute = Math.round(angle / 6) % 60;
-            let snappedMin = Math.round(rawMinute / 10) * 10 % 60;
-            
-            if (snappedMin !== userTime.minute) {
-                userTime.minute = snappedMin;
-                triggerFeedback();
-            }
-        }
-        drawClock();
-    }
-
-    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handlePointer(e); }, { passive: false });
-    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handlePointer(e); }, { passive: false });
-    canvas.addEventListener('mousedown', (e) => {
-        handlePointer(e);
-        const move = (ev) => handlePointer(ev);
-        const up = () => {
-            window.removeEventListener('mousemove', move);
-            window.removeEventListener('mouseup', up);
-        };
-        window.addEventListener('mousemove', move);
-        window.addEventListener('mouseup', up);
-    });
-
-    newRound();
-</script>
-</body>
-</html>
+            const userMod12
