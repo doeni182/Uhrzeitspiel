@@ -1,3 +1,10 @@
+Hier ist der vollständig aktualisierte Code für deine index.html.
+Die Farbanpassungen im Überblick:
+ * Zifferblatt tagsüber: Auf #FAE7E2 gesetzt.
+ * Stundenzeiger: Im kräftigen Lila #4F05F8 (inklusive angepasster Segment-Taste und Sprachansage).
+ * Minutenzeiger: Im sanften Rosé-/Fliederton #DEC0DF (mit abgestimmter 10er-Minuten-Skala und Segment-Taste).
+Vollständiger Code (index.html)
+Kopiere den Code komplett in deine Datei auf GitHub und führe den Commit durch:
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -12,14 +19,13 @@
     
     <style>
         :root {
-            --app-bg: #3DDDE3;     /* Fester Hintergrund */
-            --clock-day: #EDC3D4;  /* Altrose für Tagzeiten */
-            --clock-night: #C2D2E9;/* Pastellblau für Nachtzeiten */
+            --app-bg: #3DDDE3;       /* Fester Hintergrund */
+            --clock-day: #FAE7E2;    /* Warmes Helles Pastell für Tagzeiten */
+            --clock-night: #C2D2E9;  /* Pastellblau für Nachtzeiten */
             --text-title: #111111;
             --text-sub: #222222;
-            --primary-blue: #007aff;
-            --hand-hour: #007aff;
-            --hand-minute: #ff3b30;
+            --hand-hour: #4F05F8;    /* Lila Stundenzeiger */
+            --hand-minute: #DEC0DF;  /* Flieder/Rosa Minutenzeiger */
         }
 
         * {
@@ -195,17 +201,17 @@
         }
 
         .hand-segment.active-hour {
-            background: linear-gradient(135deg, #007aff 0%, #0056b3 100%);
+            background: linear-gradient(135deg, #4F05F8 0%, #3502ad 100%);
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 4px 14px rgba(0, 122, 255, 0.35);
+            box-shadow: 0 4px 14px rgba(79, 5, 248, 0.4);
         }
 
         .hand-segment.active-minute {
-            background: linear-gradient(135deg, #ff3b30 0%, #d70015 100%);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 4px 14px rgba(255, 59, 48, 0.35);
+            background: linear-gradient(135deg, #DEC0DF 0%, #ba97bb 100%);
+            color: #311833;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 4px 14px rgba(222, 192, 223, 0.6);
         }
 
         .hand-dot {
@@ -215,13 +221,17 @@
             display: inline-block;
         }
 
-        .dot-hour { background: #007aff; }
-        .dot-minute { background: #ff3b30; }
+        .dot-hour { background: #4F05F8; }
+        .dot-minute { background: #DEC0DF; border: 1px solid rgba(0,0,0,0.15); }
 
-        .hand-segment.active-hour .dot-hour,
-        .hand-segment.active-minute .dot-minute {
+        .hand-segment.active-hour .dot-hour {
             background: #ffffff;
             box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+        }
+
+        .hand-segment.active-minute .dot-minute {
+            background: #311833;
+            box-shadow: 0 0 6px rgba(49, 24, 51, 0.4);
         }
 
         /* Digital Display Card */
@@ -477,11 +487,11 @@
     <div class="hand-switcher" id="handSwitcher">
         <button class="hand-segment active-hour" id="segHour" onclick="selectHand('hour')">
             <span class="hand-dot dot-hour"></span>
-            <span>1. Stunde (Blau)</span>
+            <span>1. Stunde (Lila)</span>
         </button>
         <button class="hand-segment" id="segMinute" onclick="selectHand('minute')">
             <span class="hand-dot dot-minute"></span>
-            <span>2. Minute (Rot)</span>
+            <span>2. Minute (Flieder)</span>
         </button>
     </div>
 
@@ -644,7 +654,7 @@
     }
 
     // --- Button-Konfetti ---
-    const confettiColors = ['#ff3b30', '#007aff', '#34c759', '#ff9500', '#af52de', '#ffcc00', '#5856d6'];
+    const confettiColors = ['#4F05F8', '#DEC0DF', '#34c759', '#ff9500', '#ff3b30', '#ffcc00', '#007aff'];
 
     function triggerButtonConfetti() {
         const btn = document.getElementById('checkButton');
@@ -748,7 +758,6 @@
         return { text: "🌙 Nachts", isDay: false, speech: "in der Nacht" };
     }
 
-    // Ändert nur die Zifferblatt-Hintergrundfarbe (Tag: Altrose, Nacht: Pastellblau)
     function updateClockFaceColor(hour) {
         const isDay = (hour >= 6 && hour < 18);
         canvas.style.backgroundColor = isDay ? 'var(--clock-day)' : 'var(--clock-night)';
@@ -770,9 +779,9 @@
     function speakTask() {
         if (mode === 'digitalToAnalog') {
             if (currentHandStep === 'hour') {
-                speak(`Stelle zuerst den blauen Stundenzeiger auf ${formatSpokenTime(targetTime.hour, 0)}.`);
+                speak(`Stelle zuerst den lila Stundenzeiger auf ${formatSpokenTime(targetTime.hour, 0)}.`);
             } else {
-                speak(`Stelle jetzt den roten Minutenzeiger auf ${targetTime.minute} Minuten.`);
+                speak(`Stelle jetzt den hellen Minutenzeiger auf ${targetTime.minute} Minuten.`);
             }
         } else {
             const desc = getDaytimeDescriptor(targetTime.hour);
@@ -787,13 +796,12 @@
         mode = Math.random() > 0.5 ? 'digitalToAnalog' : 'analogToDigital';
         currentHandStep = 'hour';
 
-        // Zifferblatt-Farbe je nach Tag/Nacht setzen
         updateClockFaceColor(targetTime.hour);
 
         if (mode === 'digitalToAnalog') {
             userTime = { hour: 12, minute: 0 };
             document.getElementById('taskTitle').innerText = 'Stelle die Uhr!';
-            document.getElementById('taskSub').innerText = 'Drehe zuerst den blauen Stundenzeiger.';
+            document.getElementById('taskSub').innerText = 'Drehe zuerst den lila Stundenzeiger.';
             document.getElementById('targetDigitalBox').style.display = 'block';
             document.getElementById('digitalInputGroup').style.display = 'none';
             document.getElementById('handSwitcher').style.display = 'flex';
@@ -838,11 +846,11 @@
         if (currentHandStep === 'hour') {
             segH.className = 'hand-segment active-hour';
             segM.className = 'hand-segment';
-            sub.innerText = 'Drehe den blauen Stundenzeiger zur richtigen Zahl.';
+            sub.innerText = 'Drehe den lila Stundenzeiger zur richtigen Zahl.';
         } else {
             segH.className = 'hand-segment';
             segM.className = 'hand-segment active-minute';
-            sub.innerText = 'Drehe den roten Minutenzeiger in 10er-Schritten.';
+            sub.innerText = 'Drehe den Flieder-Minutenzeiger in 10er-Schritten.';
         }
     }
 
@@ -923,7 +931,7 @@
                 ctx.moveTo(x1, y1);
                 ctx.lineTo(x2, y2);
                 ctx.lineWidth = is10Min ? 3.5 : 2;
-                ctx.strokeStyle = is10Min ? '#ff3b30' : 'rgba(0, 0, 0, 0.35)';
+                ctx.strokeStyle = is10Min ? '#8a508c' : 'rgba(0, 0, 0, 0.35)';
                 ctx.lineCap = 'round';
                 ctx.stroke();
             } else {
@@ -939,8 +947,8 @@
         }
 
         // 2. 10er-Minutenzahlen
-        ctx.font = '700 16px -apple-system, BlinkMacSystemFont, "SF Pro Rounded", sans-serif';
-        ctx.fillStyle = '#ff3b30';
+        ctx.font = '800 16px -apple-system, BlinkMacSystemFont, "SF Pro Rounded", sans-serif';
+        ctx.fillStyle = '#8a508c';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
@@ -978,11 +986,11 @@
         const isHourActive = (mode !== 'digitalToAnalog' || currentHandStep === 'hour');
         const isMinuteActive = (mode !== 'digitalToAnalog' || currentHandStep === 'minute');
 
-        // Stundenzeiger (Blau)
-        drawHandDirect(cx, cy, hourAngle, radius * 0.46, isHourActive ? 14 : 9, isHourActive ? '#007aff' : 'rgba(0, 122, 255, 0.28)');
+        // Stundenzeiger (Lila #4F05F8)
+        drawHandDirect(cx, cy, hourAngle, radius * 0.46, isHourActive ? 14 : 9, isHourActive ? '#4F05F8' : 'rgba(79, 5, 248, 0.28)');
         
-        // Minutenzeiger (Rot)
-        drawHandDirect(cx, cy, minuteAngle, radius * 0.72, isMinuteActive ? 9 : 5, isMinuteActive ? '#ff3b30' : 'rgba(255, 59, 48, 0.28)');
+        // Minutenzeiger (Flieder #DEC0DF mit dunkler Kontur für optimale Lesbarkeit)
+        drawHandDirect(cx, cy, minuteAngle, radius * 0.72, isMinuteActive ? 10 : 6, isMinuteActive ? '#DEC0DF' : 'rgba(222, 192, 223, 0.35)', isMinuteActive ? '#8a508c' : 'transparent');
 
         // Mittelpunkt
         ctx.beginPath();
@@ -996,7 +1004,7 @@
         ctx.fill();
     }
 
-    function drawHandDirect(cx, cy, angle, length, width, color) {
+    function drawHandDirect(cx, cy, angle, length, width, color, outlineColor = 'transparent') {
         ctx.save();
         ctx.beginPath();
         ctx.lineWidth = width;
@@ -1005,6 +1013,16 @@
         ctx.moveTo(cx, cy);
         ctx.lineTo(cx + Math.cos(angle) * length, cy + Math.sin(angle) * length);
         ctx.stroke();
+
+        // Feine Kontur für hellere Farben
+        if (outlineColor !== 'transparent') {
+            ctx.beginPath();
+            ctx.lineWidth = 1.2;
+            ctx.strokeStyle = outlineColor;
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + Math.cos(angle) * length, cy + Math.sin(angle) * length);
+            ctx.stroke();
+        }
         ctx.restore();
     }
 
@@ -1062,3 +1080,4 @@
 </script>
 </body>
 </html>
+
