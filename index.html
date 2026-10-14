@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Uhrzeit lernen</title>
     
-    <!-- iOS Vollbild & App-Verhalten -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Uhrzeit">
@@ -39,7 +38,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+            padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
         }
 
         .container {
@@ -48,7 +47,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
         }
 
         /* Top Bar */
@@ -96,28 +95,49 @@
         .task-subtitle {
             font-size: 0.95rem;
             color: var(--text-sub);
+            margin-top: 3px;
+        }
+
+        /* Phase Indicator Pill */
+        .step-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.9rem;
             margin-top: 4px;
+            transition: all 0.3s ease;
+        }
+        .step-pill.hour-phase {
+            background: rgba(0, 122, 255, 0.15);
+            color: var(--primary-blue);
+        }
+        .step-pill.minute-phase {
+            background: rgba(255, 59, 48, 0.15);
+            color: var(--hand-minute);
         }
 
         /* Digital Display Card */
         .digital-box {
             background: var(--card-bg);
             border-radius: 18px;
-            padding: 10px 24px;
+            padding: 8px 24px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             text-align: center;
-            width: 80%;
+            width: 75%;
         }
 
         .digital-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: var(--text-sub);
             letter-spacing: 1px;
         }
 
         .digital-time {
-            font-size: 2.5rem;
+            font-size: 2.4rem;
             font-weight: 700;
             font-variant-numeric: tabular-nums;
             font-family: "SF Mono", Menlo, monospace;
@@ -139,12 +159,27 @@
             background: #fff;
         }
 
-        /* Stepper Controls (Modus 2) */
+        /* Toggle Button zwischen Stunden- & Minuten-Einstellung */
+        .switch-hand-btn {
+            background: #e5e5ea;
+            color: var(--text-main);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Stepper Controls (Modus 2: Analog -> Digital) */
         .stepper-container {
             display: flex;
             gap: 20px;
             background: var(--card-bg);
-            padding: 12px 18px;
+            padding: 10px 18px;
             border-radius: 18px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
@@ -153,11 +188,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         .stepper-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-sub);
         }
@@ -165,7 +200,7 @@
         .stepper-controls {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .step-btn {
@@ -180,7 +215,7 @@
         }
 
         .step-val {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 700;
             width: 44px;
             text-align: center;
@@ -198,7 +233,6 @@
             border-radius: 16px;
             box-shadow: 0 4px 14px rgba(0, 122, 255, 0.35);
             cursor: pointer;
-            margin-top: 10px;
         }
 
         .check-btn:active {
@@ -222,7 +256,10 @@
 
     <div class="task-card">
         <div class="task-title" id="taskTitle">Stelle die Uhr!</div>
-        <div class="task-subtitle" id="taskSub">Bewege die Zeiger passend zur Zeit.</div>
+        <div class="task-subtitle" id="taskSub">Bewege zuerst den blauen Stundenzeiger.</div>
+        <div id="stepPillWrapper">
+            <span class="step-pill hour-phase" id="stepPill">1. Blauer Zeiger (Stunde)</span>
+        </div>
     </div>
 
     <div class="digital-box" id="targetDigitalBox">
@@ -234,6 +271,12 @@
         <canvas id="clockCanvas" width="540" height="540"></canvas>
     </div>
 
+    <!-- Taste zum manuellen Umschalten zwischen den Zeigern -->
+    <button class="switch-hand-btn" id="switchHandBtn" onclick="toggleHandStep()">
+        ➡️ Weiter zum roten Zeiger (Minute)
+    </button>
+
+    <!-- Stepper (nur im Modus "Analog -> Digital") -->
     <div class="stepper-container" id="digitalInputGroup" style="display: none;">
         <div class="stepper-group">
             <span class="stepper-label">Stunde (0–23)</span>
@@ -264,17 +307,17 @@
 
     let streak = 0;
     let mode = 'digitalToAnalog'; // oder 'analogToDigital'
+    let currentHandStep = 'hour'; // 'hour' oder 'minute'
     let targetTime = { hour: 12, minute: 0 };
     let userTime = { hour: 12, minute: 0 };
-    let activeDragHand = null;
 
-    // --- Audio Sprachausgabe (Deutsch) ---
+    // --- Sprachausgabe ---
     function speak(text) {
         if (!('speechSynthesis' in window)) return;
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'de-DE';
-        utterance.rate = 0.85; // Kindgerechtes Tempo
+        utterance.rate = 0.85;
         window.speechSynthesis.speak(utterance);
     }
 
@@ -284,38 +327,73 @@
 
     function speakTask() {
         if (mode === 'digitalToAnalog') {
-            speak(`Stelle die Uhr auf ${formatSpokenTime(targetTime.hour, targetTime.minute)}.`);
+            if (currentHandStep === 'hour') {
+                speak(`Stelle zuerst den blauen Stundenzeiger auf ${formatSpokenTime(targetTime.hour, 0)}.`);
+            } else {
+                speak(`Stelle jetzt den roten Minutenzeiger auf ${targetTime.minute} Minuten.`);
+            }
         } else {
             speak("Wie spät ist es auf der Uhr? Stelle die Digitaluhr ein.");
         }
     }
 
-    // --- Spielsteuerung ---
+    // --- Rundensteuerung ---
     function newRound() {
         const validMinutes = [0, 10, 20, 30, 40, 50];
         targetTime.hour = Math.floor(Math.random() * 24);
         targetTime.minute = validMinutes[Math.floor(Math.random() * validMinutes.length)];
         mode = Math.random() > 0.5 ? 'digitalToAnalog' : 'analogToDigital';
+        currentHandStep = 'hour';
 
         if (mode === 'digitalToAnalog') {
             userTime = { hour: 12, minute: 0 };
             document.getElementById('taskTitle').innerText = 'Stelle die Uhr!';
-            document.getElementById('taskSub').innerText = 'Bewege die Zeiger passend zur Zeit.';
             document.getElementById('targetDigitalBox').style.display = 'block';
             document.getElementById('digitalInputGroup').style.display = 'none';
+            document.getElementById('stepPillWrapper').style.display = 'block';
+            document.getElementById('switchHandBtn').style.display = 'flex';
             document.getElementById('digitalTargetTime').innerText = 
                 `${String(targetTime.hour).padStart(2,'0')}:${String(targetTime.minute).padStart(2,'0')}`;
+            updateStepPillUI();
         } else {
             userTime = { hour: 0, minute: 0 };
             document.getElementById('taskTitle').innerText = 'Wie spät ist es?';
             document.getElementById('taskSub').innerText = 'Tippe die 24h-Digitalzeit ein.';
             document.getElementById('targetDigitalBox').style.display = 'none';
             document.getElementById('digitalInputGroup').style.display = 'flex';
+            document.getElementById('stepPillWrapper').style.display = 'none';
+            document.getElementById('switchHandBtn').style.display = 'none';
             updateStepperUI();
         }
 
         drawClock();
-        setTimeout(speakTask, 300);
+        setTimeout(speakTask, 350);
+    }
+
+    function toggleHandStep() {
+        currentHandStep = (currentHandStep === 'hour') ? 'minute' : 'hour';
+        updateStepPillUI();
+        drawClock();
+        speakTask();
+        triggerHaptic();
+    }
+
+    function updateStepPillUI() {
+        const pill = document.getElementById('stepPill');
+        const sub = document.getElementById('taskSub');
+        const toggleBtn = document.getElementById('switchHandBtn');
+
+        if (currentHandStep === 'hour') {
+            pill.className = 'step-pill hour-phase';
+            pill.innerText = '1. Blauer Zeiger (Stunde)';
+            sub.innerText = 'Bewege den blauen Stundenzeiger.';
+            toggleBtn.innerText = '➡️ Weiter zum roten Zeiger (Minute)';
+        } else {
+            pill.className = 'step-pill minute-phase';
+            pill.innerText = '2. Roter Zeiger (Minute)';
+            sub.innerText = 'Bewege den roten Minutenzeiger in 10er-Schritten.';
+            toggleBtn.innerText = '⬅️ Zurück zum blauen Zeiger';
+        }
     }
 
     function changeUserTime(type, delta) {
@@ -359,22 +437,22 @@
         if (navigator.vibrate) navigator.vibrate(10);
     }
 
-    // --- Uhr zeichnen (Canvas) ---
+    // --- Zifferblatt & Zeiger zeichnen ---
     function drawClock() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
         ctx.translate(radius, radius);
 
-        // Zifferblatt Markierungen (10er Schritte)
+        // 10-Minuten-Markierungen auf dem Zifferblatt
         for (let i = 0; i < 6; i++) {
-            ctx.rotate((Math.PI / 3));
+            ctx.rotate(Math.PI / 3);
             ctx.beginPath();
             ctx.rect(-3, -radius + 20, 6, 18);
             ctx.fillStyle = '#c7c7cc';
             ctx.fill();
         }
 
-        // Zahlen 1 bis 12
+        // Stundenzahlen 1 bis 12
         ctx.font = 'bold 38px -apple-system, BlinkMacSystemFont, sans-serif';
         ctx.fillStyle = '#1c1c1e';
         ctx.textAlign = 'center';
@@ -391,14 +469,25 @@
         }
 
         const time = (mode === 'digitalToAnalog') ? userTime : targetTime;
-        const hourVal = (time.hour % 12) + time.minute / 60;
-        const hourAngle = (hourVal * Math.PI / 6);
-        const minuteAngle = (time.minute * Math.PI / 30);
+        
+        // Winkel berechnen: Im Einstell-Modus steht der Stundenzeiger exakt auf der Stunde
+        // damit Schulanfänger nicht verwirrt werden; beim Prüfen/Anzeigen leicht mitgeführt
+        const hourVal = (mode === 'digitalToAnalog' && currentHandStep === 'hour') 
+            ? (time.hour % 12) 
+            : (time.hour % 12) + (time.minute / 60);
 
-        // Stundenzeiger (Blau)
-        drawHand(hourAngle, radius * 0.48, 14, '#007aff');
-        // Minutenzeiger (Rot)
-        drawHand(minuteAngle, radius * 0.72, 9, '#ff3b30');
+        const hourAngle = hourVal * Math.PI / 6;
+        const minuteAngle = time.minute * Math.PI / 30;
+
+        // Visueller Fokus: Inaktiver Zeiger wird leicht abgedunkelt/transparent
+        const hourAlpha = (mode === 'digitalToAnalog' && currentHandStep === 'minute') ? 0.35 : 1.0;
+        const minuteAlpha = (mode === 'digitalToAnalog' && currentHandStep === 'hour') ? 0.30 : 1.0;
+
+        // 1. Stundenzeiger (Blau)
+        drawHand(hourAngle, radius * 0.48, 14, `rgba(0, 122, 255, ${hourAlpha})`);
+        
+        // 2. Minutenzeiger (Rot)
+        drawHand(minuteAngle, radius * 0.72, 9, `rgba(255, 59, 48, ${minuteAlpha})`);
 
         // Achse
         ctx.beginPath();
@@ -422,7 +511,7 @@
         ctx.restore();
     }
 
-    // --- Touch / Drag Steuerung ---
+    // --- Präzises Zeiger-Stellen ohne Springen ---
     function handlePointer(e) {
         if (mode !== 'digitalToAnalog') return;
         const rect = canvas.getBoundingClientRect();
@@ -432,24 +521,32 @@
         const y = clientY - (rect.top + rect.height / 2);
         const dist = Math.sqrt(x*x + y*y);
 
+        // Mindestabstand zur Mitte, um Fehleingaben beim Auflegen zu vermeiden
+        if (dist < 20) return;
+
         let angle = Math.atan2(y, x) * 180 / Math.PI + 90;
         if (angle < 0) angle += 360;
 
-        if (dist > (rect.width / 2) * 0.5) {
-            // Außen: Minutenzeiger (in 10er Schritten einrasten)
+        if (currentHandStep === 'hour') {
+            // RASTET EXAKT AUF DIE 12 STUNDEN EIN
+            let hour12 = Math.round(angle / 30);
+            if (hour12 === 0) hour12 = 12;
+            const isPM = targetTime.hour >= 12; // Übernimmt Tag/Nacht der Zielzeit
+            const newHour = (hour12 % 12) + (isPM ? 12 : 0);
+            
+            if (newHour !== userTime.hour) {
+                userTime.hour = newHour;
+                triggerHaptic();
+            }
+        } else {
+            // RASTET EXAKT AUF DIE 10-MINUTEN-SCHRITTE EIN (0, 10, 20, 30, 40, 50)
             let rawMinute = Math.round(angle / 6) % 60;
             let snappedMin = Math.round(rawMinute / 10) * 10 % 60;
+            
             if (snappedMin !== userTime.minute) {
                 userTime.minute = snappedMin;
                 triggerHaptic();
             }
-        } else if (dist > 15) {
-            // Innen: Stundenzeiger
-            let hour12 = Math.round(angle / 30);
-            if (hour12 === 0) hour12 = 12;
-            const isPM = userTime.hour >= 12;
-            userTime.hour = (hour12 % 12) + (isPM ? 12 : 0);
-            triggerHaptic();
         }
         drawClock();
     }
