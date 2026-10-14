@@ -39,6 +39,7 @@
             align-items: center;
             min-height: 100vh;
             padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
+            overflow: hidden;
         }
 
         .container {
@@ -48,6 +49,7 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
+            position: relative;
         }
 
         /* Top Bar */
@@ -258,6 +260,69 @@
         .check-btn:active {
             transform: scale(0.98);
         }
+
+        /* 3er-Schritt Feier-Overlay */
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .celebration-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .celebration-card {
+            background: white;
+            padding: 28px 36px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            transform: scale(0.6);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .celebration-overlay.active .celebration-card {
+            transform: scale(1);
+        }
+
+        .celebration-emoji {
+            font-size: 5rem;
+            line-height: 1.1;
+            animation: bounceEmoji 1s infinite alternate ease-in-out;
+        }
+
+        .celebration-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 10px;
+        }
+
+        .celebration-sub {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-top: 4px;
+        }
+
+        @keyframes bounceEmoji {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-12px); }
+        }
     </style>
 </head>
 <body>
@@ -278,12 +343,10 @@
         <div class="task-title" id="taskTitle">Stelle die Uhr!</div>
         <div class="task-subtitle" id="taskSub">Bewege zuerst den blauen Stundenzeiger.</div>
 
-        <!-- Tag / Nacht Hinweis für Erstklässler -->
         <div id="daytimeBadgeWrapper" style="display: none;">
             <div class="daytime-badge" id="daytimeBadge">☀️ Vormittag / Tag</div>
         </div>
 
-        <!-- 2-Schritt Pill für Zeiger-Einstellung -->
         <div id="stepPillWrapper">
             <span class="step-pill hour-phase" id="stepPill">1. Blauer Zeiger (Stunde)</span>
         </div>
@@ -302,7 +365,6 @@
         ➡️ Weiter zum roten Zeiger (Minute)
     </button>
 
-    <!-- Digitaluhr Stepper für 24h Eingabe -->
     <div class="stepper-container" id="digitalInputGroup" style="display: none;">
         <div class="stepper-group">
             <span class="stepper-label">Stunde (0–23)</span>
@@ -326,6 +388,15 @@
     <button class="check-btn" onclick="checkAnswer()">Prüfen ✓</button>
 </div>
 
+<!-- 3er-Serie Feier-Popup -->
+<div class="celebration-overlay" id="celebrationOverlay">
+    <div class="celebration-card">
+        <div class="celebration-emoji" id="celebrationEmoji">🥳</div>
+        <div class="celebration-title" id="celebrationTitle">Klasse gemacht!</div>
+        <div class="celebration-sub" id="celebrationSub">3 Richtige hintereinander!</div>
+    </div>
+</div>
+
 <script>
     const canvas = document.getElementById('clockCanvas');
     const ctx = canvas.getContext('2d');
@@ -337,11 +408,140 @@
     let targetTime = { hour: 12, minute: 0 };
     let userTime = { hour: 12, minute: 0 };
 
-    function isDaytime(hour) {
-        // Zwischen 6:00 und 17:59 gilt didaktisch als Tag / hell
-        return hour >= 6 && hour < 18;
+    // --- Web Audio API (Synthetische Soundeffekte) ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new AudioContext();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
     }
 
+    // Heller, fröhlicher "Richtig"-Ton (C-Dur Duett)
+    function playCorrectSound() {
+        initAudio();
+        const now = audioCtx.currentTime;
+
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc1.type = 'triangle';
+        osc2.type = 'triangle';
+
+        // C5 nach E5
+        osc1.frequency.setValueAtTime(523.25, now);
+        osc1.frequency.exponentialRampToValueAtTime(659.25, now + 0.12);
+
+        // G5
+        osc2.frequency.setValueAtTime(783.99, now + 0.08);
+
+        gainNode.gain.setValueAtTime(0.18, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc1.start(now);
+        osc2.start(now + 0.08);
+        osc1.stop(now + 0.35);
+        osc2.stop(now + 0.35);
+    }
+
+    // Sanfter, kinderfreundlicher "Falsch"-Ton
+    function playWrongSound() {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.setValueAtTime(220, now + 0.15);
+
+        gainNode.gain.setValueAtTime(0.15, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.35);
+    }
+
+    // Jubel-Jingle bei 3er-Schritten (Dreiklang)
+    function playCelebrationFanfare() {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+
+        notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            const startT = now + idx * 0.09;
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, startT);
+
+            gainNode.gain.setValueAtTime(0.2, startT);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startT + (idx === 3 ? 0.6 : 0.25));
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.start(startT);
+            osc.stop(startT + (idx === 3 ? 0.6 : 0.25));
+        });
+    }
+
+    // Subtiles Klick-Geräusch beim Drehen
+    function playTickSound() {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1000, now);
+        gainNode.gain.setValueAtTime(0.04, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.03);
+    }
+
+    // --- Feier Emojis für 3er Serien ---
+    const partyEmojis = ['🥳', '🚀', '🦁', '🦄', '🦖', '🏆', '🎉', '🌟'];
+
+    function show3erCelebration(currentStreak) {
+        const overlay = document.getElementById('celebrationOverlay');
+        const emojiEl = document.getElementById('celebrationEmoji');
+        const subEl = document.getElementById('celebrationSub');
+
+        // Zufälliges kindgerechtes Tier / Emoji
+        const randomEmoji = partyEmojis[Math.floor(Math.random() * partyEmojis.length)];
+        emojiEl.innerText = randomEmoji;
+        subEl.innerText = `${currentStreak} Richtige hintereinander!`;
+
+        overlay.classList.add('active');
+        playCelebrationFanfare();
+
+        // Nach 1.8 Sekunden automatisch zur nächsten Aufgabe übergehen
+        setTimeout(() => {
+            overlay.classList.remove('active');
+            newRound();
+        }, 1800);
+    }
+
+    // --- Didaktische Zeit-Hilfe ---
     function getDaytimeDescriptor(hour) {
         if (hour >= 6 && hour < 12) return { text: "☀️ Morgens / Vormittag", isDay: true, speech: "am Vormittag" };
         if (hour >= 12 && hour < 18) return { text: "☀️ Nachmittag", isDay: true, speech: "am Nachmittag" };
@@ -394,7 +594,6 @@
                 `${String(targetTime.hour).padStart(2,'0')}:${String(targetTime.minute).padStart(2,'0')}`;
             updateStepPillUI();
         } else {
-            // Modus Analog -> Digital: Initialwert neutral
             userTime = { hour: 12, minute: 0 };
             document.getElementById('taskTitle').innerText = 'Wie spät ist es?';
             document.getElementById('taskSub').innerText = 'Schau auf die Zeiger und die Tageszeit:';
@@ -404,7 +603,6 @@
             document.getElementById('switchHandBtn').style.display = 'none';
             document.getElementById('daytimeBadgeWrapper').style.display = 'block';
 
-            // Tag / Nacht Badge konfigurieren
             const desc = getDaytimeDescriptor(targetTime.hour);
             const badge = document.getElementById('daytimeBadge');
             badge.innerText = desc.text;
@@ -418,11 +616,12 @@
     }
 
     function toggleHandStep() {
+        initAudio();
         currentHandStep = (currentHandStep === 'hour') ? 'minute' : 'hour';
         updateStepPillUI();
         drawClock();
         speakTask();
-        triggerHaptic();
+        triggerFeedback();
     }
 
     function updateStepPillUI() {
@@ -444,13 +643,14 @@
     }
 
     function changeUserTime(type, delta) {
+        initAudio();
         if (type === 'hour') {
             userTime.hour = (userTime.hour + delta + 24) % 24;
         } else {
             userTime.minute = (userTime.minute + delta + 60) % 60;
         }
         updateStepperUI();
-        triggerHaptic();
+        triggerFeedback();
     }
 
     function updateStepperUI() {
@@ -459,38 +659,47 @@
     }
 
     function checkAnswer() {
+        initAudio();
         let isCorrect = false;
         if (mode === 'digitalToAnalog') {
             const targetMod12 = targetTime.hour % 12;
             const userMod12 = userTime.hour % 12;
             isCorrect = (targetMod12 === userMod12 && targetTime.minute === userTime.minute);
         } else {
-            // Echter 24h-Abgleich
             isCorrect = (targetTime.hour === userTime.hour && targetTime.minute === userTime.minute);
         }
 
         if (isCorrect) {
             streak++;
             document.getElementById('streakCount').innerText = streak;
-            speak("Super gemacht!");
-            setTimeout(newRound, 1200);
+
+            // Feier-Emoji nach je 3 richtigen Antworten
+            if (streak % 3 === 0) {
+                show3erCelebration(streak);
+            } else {
+                playCorrectSound();
+                speak("Super gemacht!");
+                setTimeout(newRound, 1200);
+            }
         } else {
             streak = 0;
             document.getElementById('streakCount').innerText = streak;
+            playWrongSound();
             speak("Probier es noch einmal!");
         }
     }
 
-    function triggerHaptic() {
+    function triggerFeedback() {
+        playTickSound();
         if (navigator.vibrate) navigator.vibrate(10);
     }
 
+    // --- Zifferblatt & Zeiger zeichnen ---
     function drawClock() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
         ctx.translate(radius, radius);
 
-        // 10-Minuten-Striche
         for (let i = 0; i < 6; i++) {
             ctx.rotate(Math.PI / 3);
             ctx.beginPath();
@@ -499,7 +708,6 @@
             ctx.fill();
         }
 
-        // Stundenzahlen 1 bis 12
         ctx.font = 'bold 38px -apple-system, BlinkMacSystemFont, sans-serif';
         ctx.fillStyle = '#1c1c1e';
         ctx.textAlign = 'center';
@@ -516,8 +724,6 @@
         }
 
         const time = (mode === 'digitalToAnalog') ? userTime : targetTime;
-        
-        // Im Einstell-Modus steht der Stundenzeiger exakt auf der Stunde
         const hourVal = (mode === 'digitalToAnalog' && currentHandStep === 'hour') 
             ? (time.hour % 12) 
             : (time.hour % 12) + (time.minute / 60);
@@ -528,13 +734,9 @@
         const hourAlpha = (mode === 'digitalToAnalog' && currentHandStep === 'minute') ? 0.35 : 1.0;
         const minuteAlpha = (mode === 'digitalToAnalog' && currentHandStep === 'hour') ? 0.30 : 1.0;
 
-        // Stundenzeiger (Blau)
         drawHand(hourAngle, radius * 0.48, 14, `rgba(0, 122, 255, ${hourAlpha})`);
-        
-        // Minutenzeiger (Rot)
         drawHand(minuteAngle, radius * 0.72, 9, `rgba(255, 59, 48, ${minuteAlpha})`);
 
-        // Achse
         ctx.beginPath();
         ctx.arc(0, 0, 12, 0, 2 * Math.PI);
         ctx.fillStyle = '#1c1c1e';
@@ -557,6 +759,7 @@
     }
 
     function handlePointer(e) {
+        initAudio();
         if (mode !== 'digitalToAnalog') return;
         const rect = canvas.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -578,7 +781,7 @@
             
             if (newHour !== userTime.hour) {
                 userTime.hour = newHour;
-                triggerHaptic();
+                triggerFeedback();
             }
         } else {
             let rawMinute = Math.round(angle / 6) % 60;
@@ -586,7 +789,7 @@
             
             if (snappedMin !== userTime.minute) {
                 userTime.minute = snappedMin;
-                triggerHaptic();
+                triggerFeedback();
             }
         }
         drawClock();
