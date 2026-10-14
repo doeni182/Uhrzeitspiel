@@ -6,13 +6,16 @@
     <title>Uhrzeit lernen</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Uhrzeit">
     
     <style>
         :root {
+            --bg-day: #EDC3D4;    /* Altrose */
+            --bg-night: #C2D2E9;  /* Pastellblau */
+            --text-title: #111111;
+            --text-sub: #3a3a3c;
             --primary-blue: #007aff;
-            --accent-orange: #ff9500;
             --hand-hour: #007aff;
             --hand-minute: #ff3b30;
         }
@@ -27,112 +30,34 @@
             padding: 0;
         }
 
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
-            position: relative;
-            background-color: #0f1026;
-            color: #ffffff;
+            background-color: var(--bg-day);
+            transition: background-color 0.8s ease;
+            color: var(--text-title);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
-            overflow: hidden;
+            height: 100dvh;
+            padding-top: max(10px, env(safe-area-inset-top));
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+            padding-left: 16px;
+            padding-right: 16px;
         }
 
-        /* --- Dynamisch wabernder Multicolor Gradient Hintergrund --- */
-        .gradient-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 0;
-            overflow: hidden;
-            background: radial-gradient(circle at 50% 50%, #15173c, #0a0b18);
-        }
-
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(85px);
-            opacity: 0.65;
-            will-change: transform;
-            animation-iteration-count: infinite;
-            animation-timing-function: ease-in-out;
-            animation-direction: alternate;
-        }
-
-        .blob-1 {
-            width: 320px;
-            height: 320px;
-            background: linear-gradient(135deg, #ff5e62, #ff9966);
-            top: -10%;
-            left: -15%;
-            animation: moveBlob1 14s infinite alternate;
-        }
-
-        .blob-2 {
-            width: 380px;
-            height: 380px;
-            background: linear-gradient(135deg, #7f00ff, #e100ff);
-            bottom: -15%;
-            right: -20%;
-            animation: moveBlob2 18s infinite alternate;
-        }
-
-        .blob-3 {
-            width: 340px;
-            height: 340px;
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
-            top: 40%;
-            left: 20%;
-            animation: moveBlob3 16s infinite alternate;
-        }
-
-        .blob-4 {
-            width: 260px;
-            height: 260px;
-            background: linear-gradient(135deg, #43e97b, #38f9d7);
-            top: 20%;
-            right: 5%;
-            opacity: 0.45;
-            animation: moveBlob4 13s infinite alternate;
-        }
-
-        @keyframes moveBlob1 {
-            0%   { transform: translate(0, 0) scale(1); }
-            50%  { transform: translate(80px, 120px) scale(1.15); }
-            100% { transform: translate(160px, 40px) scale(0.9); }
-        }
-
-        @keyframes moveBlob2 {
-            0%   { transform: translate(0, 0) scale(1); }
-            50%  { transform: translate(-100px, -90px) scale(1.2); }
-            100% { transform: translate(-140px, 30px) scale(0.95); }
-        }
-
-        @keyframes moveBlob3 {
-            0%   { transform: translate(0, 0) scale(0.9); }
-            50%  { transform: translate(-80px, 90px) scale(1.25); }
-            100% { transform: translate(60px, -60px) scale(1); }
-        }
-
-        @keyframes moveBlob4 {
-            0%   { transform: translate(0, 0) scale(1); }
-            50%  { transform: translate(-60px, 80px) scale(0.85); }
-            100% { transform: translate(70px, -40px) scale(1.1); }
-        }
-
-        /* --- Content Container --- */
         .container {
             width: 100%;
-            max-width: 380px;
+            max-width: 360px;
+            height: 100%;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
-            position: relative;
-            z-index: 1;
+            gap: 8px;
         }
 
         /* Top Bar */
@@ -141,223 +66,217 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .streak-badge {
-            background: rgba(255, 255, 255, 0.16);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: #ffb340;
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            color: #d97706;
             font-weight: 800;
-            font-size: 1.1rem;
-            padding: 6px 14px;
-            border-radius: 20px;
+            font-size: 1rem;
+            padding: 5px 12px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         }
 
         .speaker-btn {
-            background: rgba(255, 255, 255, 0.16);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.28);
-            color: #ffffff;
-            width: 42px;
-            height: 42px;
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            color: var(--text-title);
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         }
 
         .speaker-btn:active {
             transform: scale(0.92);
         }
 
-        /* Aufgaben-Texte in klarem Weiß */
+        /* Titel & Aufgabenstellung */
         .task-card {
             text-align: center;
+            flex-shrink: 0;
         }
 
         .task-title {
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             font-weight: 800;
-            color: #ffffff;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+            color: var(--text-title);
             letter-spacing: -0.2px;
         }
 
         .task-subtitle {
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.82);
-            margin-top: 3px;
-            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-top: 2px;
+            font-weight: 600;
         }
 
-        /* Tag / Nacht Anzeige */
+        /* Tag / Nacht Badge */
         .daytime-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 16px;
-            border-radius: 14px;
+            padding: 4px 14px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 0.92rem;
-            margin-top: 5px;
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            transition: all 0.3s ease;
-        }
-        .daytime-day {
-            background: rgba(255, 230, 150, 0.25);
-            color: #fff6d6;
-            border: 1px solid rgba(255, 235, 170, 0.45);
-            box-shadow: 0 4px 14px rgba(255, 200, 0, 0.15);
-        }
-        .daytime-night {
-            background: rgba(20, 30, 60, 0.45);
-            color: #e2e8f0;
-            border: 1px solid rgba(140, 170, 255, 0.35);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+            font-size: 0.85rem;
+            margin-top: 4px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            color: var(--text-title);
         }
 
-        /* Phase Indicator Pill (Modus Digital -> Analog) */
+        /* Zeiger-Schritt-Pille */
         .step-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 16px;
-            border-radius: 14px;
+            padding: 4px 14px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 0.9rem;
-            margin-top: 5px;
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            font-size: 0.85rem;
+            margin-top: 4px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         .step-pill.hour-phase {
-            background: rgba(0, 122, 255, 0.25);
-            color: #9cd5ff;
-            border: 1px solid rgba(0, 122, 255, 0.45);
+            background: rgba(0, 122, 255, 0.18);
+            color: #0056b3;
+            border: 1px solid rgba(0, 122, 255, 0.35);
         }
         .step-pill.minute-phase {
-            background: rgba(255, 59, 48, 0.25);
-            color: #ffb1ab;
-            border: 1px solid rgba(255, 59, 48, 0.45);
+            background: rgba(255, 59, 48, 0.18);
+            color: #c92a2a;
+            border: 1px solid rgba(255, 59, 48, 0.35);
         }
 
-        /* Digital Display Card (Glassmorphism) */
+        /* Digital Display Card (Heller Liquid-Glass Look) */
         .digital-box {
-            background: rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.42);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            border-radius: 20px;
-            padding: 8px 24px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 1px 1px rgba(255,255,255,0.4);
+            border: 1.5px solid rgba(255, 255, 255, 0.7);
+            border-radius: 18px;
+            padding: 6px 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.8);
             text-align: center;
-            width: 75%;
+            width: 70%;
+            flex-shrink: 0;
         }
 
         .digital-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 800;
-            color: rgba(255, 255, 255, 0.7);
+            color: #636366;
             letter-spacing: 1.2px;
         }
 
         .digital-time {
-            font-size: 2.4rem;
+            font-size: 2.1rem;
             font-weight: 800;
-            color: #ffffff;
+            color: #000000;
             font-variant-numeric: tabular-nums;
             font-family: "SF Mono", Menlo, monospace;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.25);
         }
 
-        /* Analog Clock Canvas Container */
+        /* Uhr-Container (Höhenadaptiv für kleine Displays) */
         .clock-wrapper {
             position: relative;
-            width: 270px;
-            height: 270px;
+            width: min(60vw, 240px);
+            height: min(60vw, 240px);
             touch-action: none;
+            flex-shrink: 0;
+            margin: 2px 0;
         }
 
         canvas {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3), inset 0 0 0 1.5px rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), inset 0 0 0 1.5px rgba(255, 255, 255, 0.8);
         }
 
+        /* Umschalt-Knopf */
         .switch-hand-btn {
-            background: rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.32);
-            color: #ffffff;
-            padding: 8px 18px;
-            border-radius: 14px;
-            font-size: 0.9rem;
-            font-weight: 600;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            color: var(--text-title);
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
 
         .switch-hand-btn:active {
             transform: scale(0.96);
         }
 
-        /* Stepper Controls */
+        /* Stepper für Digitaluhr-Eingabe */
         .stepper-container {
             display: flex;
-            gap: 16px;
-            background: rgba(255, 255, 255, 0.16);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 10px 18px;
-            border-radius: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 1px 1px rgba(255,255,255,0.35);
+            gap: 14px;
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1.5px solid rgba(255, 255, 255, 0.7);
+            padding: 8px 16px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+            flex-shrink: 0;
         }
 
         .stepper-group {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 2px;
         }
 
         .stepper-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
-            color: rgba(255, 255, 255, 0.75);
+            color: #48484a;
         }
 
         .stepper-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .step-btn {
-            background: rgba(255, 255, 255, 0.22);
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            color: #ffffff;
-            width: 36px;
-            height: 36px;
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            color: var(--text-title);
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
@@ -366,15 +285,15 @@
         }
 
         .step-btn:active {
-            background: rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.9);
             transform: scale(0.92);
         }
 
         .step-val {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 800;
-            color: #ffffff;
-            width: 44px;
+            color: #000000;
+            width: 40px;
             text-align: center;
         }
 
@@ -382,24 +301,23 @@
         .check-btn {
             position: relative;
             width: 100%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.12) 100%);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.45);
-            border-top: 1.5px solid rgba(255, 255, 255, 0.75);
-            font-size: 1.2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.3) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #000000;
+            border: 1.5px solid rgba(255, 255, 255, 0.85);
+            border-top: 2px solid #ffffff;
+            font-size: 1.15rem;
             font-weight: 800;
-            padding: 16px;
-            border-radius: 20px;
+            padding: 14px;
+            border-radius: 18px;
             box-shadow: 
-                0 12px 28px rgba(0, 0, 0, 0.22),
-                inset 0 1px 1px rgba(255, 255, 255, 0.7),
-                inset 0 -1px 1px rgba(0, 0, 0, 0.12);
+                0 10px 24px rgba(0, 0, 0, 0.08),
+                inset 0 1px 1px rgba(255, 255, 255, 0.9);
             cursor: pointer;
             overflow: hidden;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+            margin-bottom: 2px;
         }
 
         .check-btn::before {
@@ -408,35 +326,34 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 48%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.03));
-            border-radius: 20px 20px 80px 80px;
+            height: 45%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.05));
+            border-radius: 18px 18px 60px 60px;
             pointer-events: none;
         }
 
         .check-btn:active {
-            transform: scale(0.97);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.7);
         }
 
-        /* --- LIQUID GLASS CELEBRATION OVERLAY --- */
+        /* --- LIQUID GLASS FEIER OVERLAY --- */
         .celebration-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(10, 12, 24, 0.45);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 100;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.35s ease;
+            transition: opacity 0.3s ease;
         }
 
         .celebration-overlay.active {
@@ -445,34 +362,16 @@
         }
 
         .celebration-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0.15) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.45) 100%);
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
-            border: 1.5px solid rgba(255, 255, 255, 0.55);
-            border-top: 2px solid rgba(255, 255, 255, 0.85);
-            padding: 32px 40px;
-            border-radius: 34px;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            padding: 28px 36px;
+            border-radius: 32px;
             text-align: center;
-            box-shadow: 
-                0 24px 50px rgba(0, 0, 0, 0.35),
-                inset 0 1px 2px rgba(255, 255, 255, 0.8),
-                inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15), inset 0 1px 2px #ffffff;
             transform: scale(0.6);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .celebration-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 45%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.02));
-            border-radius: 34px 34px 100px 100px;
-            pointer-events: none;
         }
 
         .celebration-overlay.active .celebration-card {
@@ -480,43 +379,32 @@
         }
 
         .celebration-emoji {
-            font-size: 5.2rem;
+            font-size: 4.8rem;
             line-height: 1.1;
             animation: bounceEmoji 1s infinite alternate ease-in-out;
-            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
         }
 
         .celebration-title {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            color: #ffffff;
-            margin-top: 12px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            color: #000000;
+            margin-top: 10px;
         }
 
         .celebration-sub {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 700;
-            color: #ffdf79;
+            color: #d97706;
             margin-top: 4px;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.25);
         }
 
         @keyframes bounceEmoji {
             0% { transform: translateY(0); }
-            100% { transform: translateY(-14px); }
+            100% { transform: translateY(-12px); }
         }
     </style>
 </head>
 <body>
-
-<!-- Dynamisch wabernder Multicolor Gradient Background -->
-<div class="gradient-background">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-    <div class="blob blob-4"></div>
-</div>
 
 <div class="container">
     <div class="header">
@@ -524,7 +412,7 @@
             <span>🔥</span> <span id="streakCount">0</span>
         </div>
         <button class="speaker-btn" onclick="speakTask()">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5-1.23L6 6H2v12h4l5.5 4V2zM14 8.86v6.28c1.38-.64 2.33-2.02 2.33-3.14s-.95-2.5-2.33-3.14z"/>
             </svg>
         </button>
@@ -549,7 +437,7 @@
     </div>
 
     <div class="clock-wrapper">
-        <canvas id="clockCanvas" width="540" height="540"></canvas>
+        <canvas id="clockCanvas" width="560" height="560"></canvas>
     </div>
 
     <button class="switch-hand-btn" id="switchHandBtn" onclick="toggleHandStep()">
@@ -565,7 +453,7 @@
                 <button class="step-btn" onclick="changeUserTime('hour', 1)">+</button>
             </div>
         </div>
-        <div style="width: 1px; background: rgba(255, 255, 255, 0.25);"></div>
+        <div style="width: 1px; background: rgba(0, 0, 0, 0.15);"></div>
         <div class="stepper-group">
             <span class="stepper-label">Minute (10er)</span>
             <div class="stepper-controls">
@@ -579,7 +467,6 @@
     <button class="check-btn" onclick="checkAnswer()">Prüfen ✓</button>
 </div>
 
-<!-- 3er-Serie Feier-Popup im Liquid Glass Look -->
 <div class="celebration-overlay" id="celebrationOverlay">
     <div class="celebration-card">
         <div class="celebration-emoji" id="celebrationEmoji">🥳</div>
@@ -599,33 +486,26 @@
     let targetTime = { hour: 12, minute: 0 };
     let userTime = { hour: 12, minute: 0 };
 
-    // --- Web Audio API (Synthetische Soundeffekte) ---
+    // --- Web Audio API ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
     function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     function playCorrectSound() {
         initAudio();
         const now = audioCtx.currentTime;
-
         const osc1 = audioCtx.createOscillator();
         const osc2 = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
 
         osc1.type = 'triangle';
         osc2.type = 'triangle';
-
         osc1.frequency.setValueAtTime(523.25, now);
         osc1.frequency.exponentialRampToValueAtTime(659.25, now + 0.12);
-
         osc2.frequency.setValueAtTime(783.99, now + 0.08);
 
         gainNode.gain.setValueAtTime(0.18, now);
@@ -730,6 +610,11 @@
         return { text: "🌙 Nachts", isDay: false, speech: "in der Nacht" };
     }
 
+    function updateBackgroundColor(hour) {
+        const isDay = (hour >= 6 && hour < 18);
+        document.body.style.backgroundColor = isDay ? 'var(--bg-day)' : 'var(--bg-night)';
+    }
+
     function speak(text) {
         if (!('speechSynthesis' in window)) return;
         window.speechSynthesis.cancel();
@@ -763,6 +648,9 @@
         mode = Math.random() > 0.5 ? 'digitalToAnalog' : 'analogToDigital';
         currentHandStep = 'hour';
 
+        // Hintergrundfarbe basierend auf Zielzeit setzen
+        updateBackgroundColor(targetTime.hour);
+
         if (mode === 'digitalToAnalog') {
             userTime = { hour: 12, minute: 0 };
             document.getElementById('taskTitle').innerText = 'Stelle die Uhr!';
@@ -788,7 +676,6 @@
             const desc = getDaytimeDescriptor(targetTime.hour);
             const badge = document.getElementById('daytimeBadge');
             badge.innerText = desc.text;
-            badge.className = 'daytime-badge ' + (desc.isDay ? 'daytime-day' : 'daytime-night');
 
             updateStepperUI();
         }
@@ -875,31 +762,61 @@
         if (navigator.vibrate) navigator.vibrate(10);
     }
 
+    // --- Zifferblatt & Zeiger zeichnen ---
     function drawClock() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
         ctx.translate(radius, radius);
 
-        for (let i = 0; i < 6; i++) {
-            ctx.rotate(Math.PI / 3);
-            ctx.beginPath();
-            ctx.rect(-3, -radius + 20, 6, 18);
-            ctx.fillStyle = '#a1a1aa';
-            ctx.fill();
+        // 1. Äußerer Ring: 60 Minuten-Punkte & Teilstriche
+        for (let m = 0; m < 60; m++) {
+            ctx.save();
+            ctx.rotate((m * Math.PI) / 30);
+
+            if (m % 5 === 0) {
+                ctx.beginPath();
+                ctx.rect(-1.5, -radius + 14, 3, 8);
+                ctx.fillStyle = (m % 10 === 0) ? '#ff3b30' : '#8e8e93';
+                ctx.fill();
+            } else {
+                ctx.beginPath();
+                ctx.arc(0, -radius + 18, 1.5, 0, 2 * Math.PI);
+                ctx.fillStyle = 'rgba(142, 142, 147, 0.45)';
+                ctx.fill();
+            }
+            ctx.restore();
         }
 
-        ctx.font = 'bold 38px -apple-system, BlinkMacSystemFont, sans-serif';
-        ctx.fillStyle = '#1c1c1e';
+        // 2. Dezente 10er-Minuten-Zahlen (00, 10, 20, 30, 40, 50)
+        ctx.font = '600 17px -apple-system, BlinkMacSystemFont, "SF Pro Rounded", sans-serif';
+        ctx.fillStyle = '#ff3b30';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        [0, 10, 20, 30, 40, 50].forEach(min => {
+            const ang = (min * Math.PI) / 30;
+            ctx.rotate(ang);
+            ctx.translate(0, -radius + 34);
+            ctx.rotate(-ang);
+            ctx.fillText(String(min).padStart(2, '0'), 0, 0);
+            ctx.rotate(ang);
+            ctx.translate(0, radius - 34);
+            ctx.rotate(-ang);
+        });
+
+        // 3. Stundenzahlen 1 bis 12
+        ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, "SF Pro Rounded", sans-serif';
+        ctx.fillStyle = '#111111';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         for (let num = 1; num <= 12; num++) {
-            const ang = num * Math.PI / 6;
+            const ang = (num * Math.PI) / 6;
             ctx.rotate(ang);
-            ctx.translate(0, -radius + 68);
+            ctx.translate(0, -radius + 76);
             ctx.rotate(-ang);
             ctx.fillText(num.toString(), 0, 0);
             ctx.rotate(ang);
-            ctx.translate(0, radius - 68);
+            ctx.translate(0, radius - 76);
             ctx.rotate(-ang);
         }
 
@@ -914,12 +831,15 @@
         const hourAlpha = (mode === 'digitalToAnalog' && currentHandStep === 'minute') ? 0.35 : 1.0;
         const minuteAlpha = (mode === 'digitalToAnalog' && currentHandStep === 'hour') ? 0.30 : 1.0;
 
-        drawHand(hourAngle, radius * 0.48, 14, `rgba(0, 122, 255, ${hourAlpha})`);
-        drawHand(minuteAngle, radius * 0.72, 9, `rgba(255, 59, 48, ${minuteAlpha})`);
+        // Stundenzeiger (Blau)
+        drawHand(hourAngle, radius * 0.48, 13, `rgba(0, 122, 255, ${hourAlpha})`);
+        // Minutenzeiger (Rot)
+        drawHand(minuteAngle, radius * 0.74, 8, `rgba(255, 59, 48, ${minuteAlpha})`);
 
+        // Mittelpunkt
         ctx.beginPath();
-        ctx.arc(0, 0, 12, 0, 2 * Math.PI);
-        ctx.fillStyle = '#1c1c1e';
+        ctx.arc(0, 0, 11, 0, 2 * Math.PI);
+        ctx.fillStyle = '#111111';
         ctx.fill();
 
         ctx.restore();
