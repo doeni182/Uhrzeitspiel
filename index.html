@@ -156,4 +156,839 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 4px 16px rgba(0,0,
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .speaker-btn {
+            background: rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #ffffff;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .speaker-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* Aufgaben-Texte in klarem Weiß */
+        .task-card {
+            text-align: center;
+        }
+
+        .task-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+            letter-spacing: -0.2px;
+        }
+
+        .task-subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.82);
+            margin-top: 3px;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Tag / Nacht Anzeige */
+        .daytime-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            margin-top: 5px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            transition: all 0.3s ease;
+        }
+        .daytime-day {
+            background: rgba(255, 230, 150, 0.25);
+            color: #fff6d6;
+            border: 1px solid rgba(255, 235, 170, 0.45);
+            box-shadow: 0 4px 14px rgba(255, 200, 0, 0.15);
+        }
+        .daytime-night {
+            background: rgba(20, 30, 60, 0.45);
+            color: #e2e8f0;
+            border: 1px solid rgba(140, 170, 255, 0.35);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Phase Indicator Pill (Modus Digital -> Analog) */
+        .step-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        .step-pill.hour-phase {
+            background: rgba(0, 122, 255, 0.25);
+            color: #9cd5ff;
+            border: 1px solid rgba(0, 122, 255, 0.45);
+        }
+        .step-pill.minute-phase {
+            background: rgba(255, 59, 48, 0.25);
+            color: #ffb1ab;
+            border: 1px solid rgba(255, 59, 48, 0.45);
+        }
+
+        /* Digital Display Card (Glassmorphism) */
+        .digital-box {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 20px;
+            padding: 8px 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 1px 1px rgba(255,255,255,0.4);
+            text-align: center;
+            width: 75%;
+        }
+
+        .digital-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1.2px;
+        }
+
+        .digital-time {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            font-variant-numeric: tabular-nums;
+            font-family: "SF Mono", Menlo, monospace;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+
+        /* Analog Clock Canvas Container */
+        .clock-wrapper {
+            position: relative;
+            width: 270px;
+            height: 270px;
+            touch-action: none;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3), inset 0 0 0 1.5px rgba(255, 255, 255, 0.6);
+        }
+
+        .switch-hand-btn {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.32);
+            color: #ffffff;
+            padding: 8px 18px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .switch-hand-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Stepper Controls */
+        .stepper-container {
+            display: flex;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 18px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 1px 1px rgba(255,255,255,0.35);
+        }
+
+        .stepper-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stepper-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .stepper-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-btn {
+            background: rgba(255, 255, 255, 0.22);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-btn:active {
+            background: rgba(255, 255, 255, 0.35);
+            transform: scale(0.92);
+        }
+
+        .step-val {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #ffffff;
+            width: 44px;
+            text-align: center;
+        }
+
+        /* --- LIQUID GLASS PRÜFEN BUTTON --- */
+        .check-btn {
+            position: relative;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.12) 100%);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-top: 1.5px solid rgba(255, 255, 255, 0.75);
+            font-size: 1.2rem;
+            font-weight: 800;
+            padding: 16px;
+            border-radius: 20px;
+            box-shadow: 
+                0 12px 28px rgba(0, 0, 0, 0.22),
+                inset 0 1px 1px rgba(255, 255, 255, 0.7),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .check-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 48%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.03));
+            border-radius: 20px 20px 80px 80px;
+            pointer-events: none;
+        }
+
+        .check-btn:active {
+            transform: scale(0.97);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        /* --- LIQUID GLASS CELEBRATION OVERLAY --- */
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 12, 24, 0.45);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .celebration-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .celebration-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0.15) 100%);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1.5px solid rgba(255, 255, 255, 0.55);
+            border-top: 2px solid rgba(255, 255, 255, 0.85);
+            padding: 32px 40px;
+            border-radius: 34px;
+            text-align: center;
+            box-shadow: 
+                0 24px 50px rgba(0, 0, 0, 0.35),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+            transform: scale(0.6);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .celebration-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 45%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.02));
+            border-radius: 34px 34px 100px 100px;
+            pointer-events: none;
+        }
+
+        .celebration-overlay.active .celebration-card {
+            transform: scale(1);
+        }
+
+        .celebration-emoji {
+            font-size: 5.2rem;
+            line-height: 1.1;
+            animation: bounceEmoji 1s infinite alternate ease-in-out;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
+        }
+
+        .celebration-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-top: 12px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .celebration-sub {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffdf79;
+            margin-top: 4px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+
+        @keyframes bounceEmoji {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-14px); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Dynamisch wabernder Multicolor Gradient Background -->
+<div class="gradient-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <div class="streak-badge">
+            <span>🔥</span> <span id="streakCount">0</span>
+        </div>
+        <button class="speaker-btn" onclick="speakTask()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5-1.23L6 6H2v12h4l5.5 4V2zM14 8.86v6.28c1.38-.64 2.33-2.02 2.33-3.14s-.95-2.5-2.33-3.14z"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="task-card">
+        <div class="task-title" id="taskTitle">Stelle die Uhr!</div>
+        <div class="task-subtitle" id="taskSub">Bewege zuerst den blauen Stundenzeiger.</div>
+
+        <div id="daytimeBadgeWrapper" style="display: none;">
+            <div class="daytime-badge" id="daytimeBadge">☀️ Vormittag / Tag</div>
+        </div>
+
+        <div id="stepPillWrapper">
+            <span class="step-pill hour-phase" id="stepPill">1. Blauer Zeiger (Stunde)</span>
+        </div>
+    </div>
+
+    <div class="digital-box" id="targetDigitalBox">
+        <div class="digital-label">ZIELZEIT</div>
+        <div class="digital-time" id="digitalTargetTime">14:10</div>
+    </div>
+
+    <div class="clock-wrapper">
+        <canvas id="clockCanvas" width="540" height="540"></canvas>
+    </div>
+
+    <button class="switch-hand-btn" id="switchHandBtn" onclick="toggleHandStep()">
+        ➡️ Weiter zum roten Zeiger (Minute)
+    </button>
+
+    <div class="stepper-container" id="digitalInputGroup" style="display: none;">
+        <div class="stepper-group">
+            <span class="stepper-label">Stunde (0–23)</span>
+            <div class="stepper-controls">
+                <button class="step-btn" onclick="changeUserTime('hour', -1)">−</button>
+                <span class="step-val" id="hourVal">12h</span>
+                <button class="step-btn" onclick="changeUserTime('hour', 1)">+</button>
+            </div>
+        </div>
+        <div style="width: 1px; background: rgba(255, 255, 255, 0.25);"></div>
+        <div class="stepper-group">
+            <span class="stepper-label">Minute (10er)</span>
+            <div class="stepper-controls">
+                <button class="step-btn" onclick="changeUserTime('minute', -10)">−</button>
+                <span class="step-val" id="minuteVal">00m</span>
+                <button class="step-btn" onclick="changeUserTime('minute', 10)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="check-btn" onclick="checkAnswer()">Prüfen ✓</button>
+</div>
+
+<!-- 3er-Serie Feier-Popup im Liquid Glass Look -->
+<div class="celebration-overlay" id="celebrationOverlay">
+    <div class="celebration-card">
+        <div class="celebration-emoji" id="celebrationEmoji">🥳</div>
+        <div class="celebration-title" id="celebrationTitle">Klasse gemacht!</div>
+        <div class="celebration-sub" id="celebrationSub">3 Richtige hintereinander!</div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('clockCanvas');
+    const ctx = canvas.getContext('2d');
+    const radius = canvas.width / 2;
+
+    let streak = 0;
+    let mode = 'digitalToAnalog';
+    let currentHandStep = 'hour';
+    let targetTime = { hour: 12, minute: 0 };
+    let userTime = { hour: 12, minute: 0 };
+
+    // --- Web Audio API (Synthetische Soundeffekte) ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new AudioContext();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playCorrectSound() {
+        initAudio();
+        const now = audioCtx.currentTime;
+
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc1.type = 'triangle';
+        osc2.type = 'triangle';
+
+        osc1.frequency.setValueAtTime(523.25, now);
+        osc1.frequency.exponentialRampToValueAtTime(659.25, now + 0.12);
+
+        osc2.frequency.setValueAtTime(783.99, now + 0.08);
+
+        gainNode.gain.setValueAtTime(0.18, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc1.start(now);
+        osc2.start(now + 0.08);
+        osc1.stop(now + 0.35);
+        osc2.stop(now + 0.35);
+    }
+
+    function playWrongSound() {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.setValueAtTime(220, now + 0.15);
+
+        gainNode.gain.setValueAtTime(0.15, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.35);
+    }
+
+    function playCelebrationFanfare() {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+
+        notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            const startT = now + idx * 0.09;
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, startT);
+
+            gainNode.gain.setValueAtTime(0.2, startT);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startT + (idx === 3 ? 0.6 : 0.25));
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.start(startT);
+            osc.stop(startT + (idx === 3 ? 0.6 : 0.25));
+        });
+    }
+
+    function playTickSound() {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1000, now);
+        gainNode.gain.setValueAtTime(0.04, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.03);
+    }
+
+    const partyEmojis = ['🥳', '🚀', '🦁', '🦄', '🦖', '🏆', '🎉', '🌟'];
+
+    function show3erCelebration(currentStreak) {
+        const overlay = document.getElementById('celebrationOverlay');
+        const emojiEl = document.getElementById('celebrationEmoji');
+        const subEl = document.getElementById('celebrationSub');
+
+        const randomEmoji = partyEmojis[Math.floor(Math.random() * partyEmojis.length)];
+        emojiEl.innerText = randomEmoji;
+        subEl.innerText = `${currentStreak} Richtige hintereinander!`;
+
+        overlay.classList.add('active');
+        playCelebrationFanfare();
+
+        setTimeout(() => {
+            overlay.classList.remove('active');
+            newRound();
+        }, 1800);
+    }
+
+    function getDaytimeDescriptor(hour) {
+        if (hour >= 6 && hour < 12) return { text: "☀️ Morgens / Vormittag", isDay: true, speech: "am Vormittag" };
+        if (hour >= 12 && hour < 18) return { text: "☀️ Nachmittag", isDay: true, speech: "am Nachmittag" };
+        if (hour >= 18 && hour < 22) return { text: "🌙 Abends", isDay: false, speech: "am Abend" };
+        return { text: "🌙 Nachts", isDay: false, speech: "in der Nacht" };
+    }
+
+    function speak(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'de-DE';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function formatSpokenTime(h, m) {
+        return m === 0 ? `${h} Uhr` : `${h} Uhr ${m}`;
+    }
+
+    function speakTask() {
+        if (mode === 'digitalToAnalog') {
+            if (currentHandStep === 'hour') {
+                speak(`Stelle zuerst den blauen Stundenzeiger auf ${formatSpokenTime(targetTime.hour, 0)}.`);
+            } else {
+                speak(`Stelle jetzt den roten Minutenzeiger auf ${targetTime.minute} Minuten.`);
+            }
+        } else {
+            const desc = getDaytimeDescriptor(targetTime.hour);
+            speak(`Wie spät ist es auf der Uhr ${desc.speech}? Stelle die 24-Stunden-Digitaluhr ein.`);
+        }
+    }
+
+    function newRound() {
+        const validMinutes = [0, 10, 20, 30, 40, 50];
+        targetTime.hour = Math.floor(Math.random() * 24);
+        targetTime.minute = validMinutes[Math.floor(Math.random() * validMinutes.length)];
+        mode = Math.random() > 0.5 ? 'digitalToAnalog' : 'analogToDigital';
+        currentHandStep = 'hour';
+
+        if (mode === 'digitalToAnalog') {
+            userTime = { hour: 12, minute: 0 };
+            document.getElementById('taskTitle').innerText = 'Stelle die Uhr!';
+            document.getElementById('taskSub').innerText = 'Bewege zuerst den blauen Stundenzeiger.';
+            document.getElementById('targetDigitalBox').style.display = 'block';
+            document.getElementById('digitalInputGroup').style.display = 'none';
+            document.getElementById('stepPillWrapper').style.display = 'block';
+            document.getElementById('switchHandBtn').style.display = 'flex';
+            document.getElementById('daytimeBadgeWrapper').style.display = 'none';
+            document.getElementById('digitalTargetTime').innerText = 
+                `${String(targetTime.hour).padStart(2,'0')}:${String(targetTime.minute).padStart(2,'0')}`;
+            updateStepPillUI();
+        } else {
+            userTime = { hour: 12, minute: 0 };
+            document.getElementById('taskTitle').innerText = 'Wie spät ist es?';
+            document.getElementById('taskSub').innerText = 'Schau auf die Zeiger und die Tageszeit:';
+            document.getElementById('targetDigitalBox').style.display = 'none';
+            document.getElementById('digitalInputGroup').style.display = 'flex';
+            document.getElementById('stepPillWrapper').style.display = 'none';
+            document.getElementById('switchHandBtn').style.display = 'none';
+            document.getElementById('daytimeBadgeWrapper').style.display = 'block';
+
+            const desc = getDaytimeDescriptor(targetTime.hour);
+            const badge = document.getElementById('daytimeBadge');
+            badge.innerText = desc.text;
+            badge.className = 'daytime-badge ' + (desc.isDay ? 'daytime-day' : 'daytime-night');
+
+            updateStepperUI();
+        }
+
+        drawClock();
+        setTimeout(speakTask, 350);
+    }
+
+    function toggleHandStep() {
+        initAudio();
+        currentHandStep = (currentHandStep === 'hour') ? 'minute' : 'hour';
+        updateStepPillUI();
+        drawClock();
+        speakTask();
+        triggerFeedback();
+    }
+
+    function updateStepPillUI() {
+        const pill = document.getElementById('stepPill');
+        const sub = document.getElementById('taskSub');
+        const toggleBtn = document.getElementById('switchHandBtn');
+
+        if (currentHandStep === 'hour') {
+            pill.className = 'step-pill hour-phase';
+            pill.innerText = '1. Blauer Zeiger (Stunde)';
+            sub.innerText = 'Bewege den blauen Stundenzeiger.';
+            toggleBtn.innerText = '➡️ Weiter zum roten Zeiger (Minute)';
+        } else {
+            pill.className = 'step-pill minute-phase';
+            pill.innerText = '2. Roter Zeiger (Minute)';
+            sub.innerText = 'Bewege den roten Minutenzeiger in 10er-Schritten.';
+            toggleBtn.innerText = '⬅️ Zurück zum blauen Zeiger';
+        }
+    }
+
+    function changeUserTime(type, delta) {
+        initAudio();
+        if (type === 'hour') {
+            userTime.hour = (userTime.hour + delta + 24) % 24;
+        } else {
+            userTime.minute = (userTime.minute + delta + 60) % 60;
+        }
+        updateStepperUI();
+        triggerFeedback();
+    }
+
+    function updateStepperUI() {
+        document.getElementById('hourVal').innerText = `${String(userTime.hour).padStart(2,'0')}h`;
+        document.getElementById('minuteVal').innerText = `${String(userTime.minute).padStart(2,'0')}m`;
+    }
+
+    function checkAnswer() {
+        initAudio();
+        let isCorrect = false;
+        if (mode === 'digitalToAnalog') {
+            const targetMod12 = targetTime.hour % 12;
+            const userMod12 = userTime.hour % 12;
+            isCorrect = (targetMod12 === userMod12 && targetTime.minute === userTime.minute);
+        } else {
+            isCorrect = (targetTime.hour === userTime.hour && targetTime.minute === userTime.minute);
+        }
+
+        if (isCorrect) {
+            streak++;
+            document.getElementById('streakCount').innerText = streak;
+
+            if (streak % 3 === 0) {
+                show3erCelebration(streak);
+            } else {
+                playCorrectSound();
+                speak("Super gemacht!");
+                setTimeout(newRound, 1200);
+            }
+        } else {
+            streak = 0;
+            document.getElementById('streakCount').innerText = streak;
+            playWrongSound();
+            speak("Probier es noch einmal!");
+        }
+    }
+
+    function triggerFeedback() {
+        playTickSound();
+        if (navigator.vibrate) navigator.vibrate(10);
+    }
+
+    function drawClock() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(radius, radius);
+
+        for (let i = 0; i < 6; i++) {
+            ctx.rotate(Math.PI / 3);
+            ctx.beginPath();
+            ctx.rect(-3, -radius + 20, 6, 18);
+            ctx.fillStyle = '#a1a1aa';
+            ctx.fill();
+        }
+
+        ctx.font = 'bold 38px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.fillStyle = '#1c1c1e';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (let num = 1; num <= 12; num++) {
+            const ang = num * Math.PI / 6;
+            ctx.rotate(ang);
+            ctx.translate(0, -radius + 68);
+            ctx.rotate(-ang);
+            ctx.fillText(num.toString(), 0, 0);
+            ctx.rotate(ang);
+            ctx.translate(0, radius - 68);
+            ctx.rotate(-ang);
+        }
+
+        const time = (mode === 'digitalToAnalog') ? userTime : targetTime;
+        const hourVal = (mode === 'digitalToAnalog' && currentHandStep === 'hour') 
+            ? (time.hour % 12) 
+            : (time.hour % 12) + (time.minute / 60);
+
+        const hourAngle = hourVal * Math.PI / 6;
+        const minuteAngle = time.minute * Math.PI / 30;
+
+        const hourAlpha = (mode === 'digitalToAnalog' && currentHandStep === 'minute') ? 0.35 : 1.0;
+        const minuteAlpha = (mode === 'digitalToAnalog' && currentHandStep === 'hour') ? 0.30 : 1.0;
+
+        drawHand(hourAngle, radius * 0.48, 14, `rgba(0, 122, 255, ${hourAlpha})`);
+        drawHand(minuteAngle, radius * 0.72, 9, `rgba(255, 59, 48, ${minuteAlpha})`);
+
+        ctx.beginPath();
+        ctx.arc(0, 0, 12, 0, 2 * Math.PI);
+        ctx.fillStyle = '#1c1c1e';
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function drawHand(angle, length, width, color) {
+        ctx.save();
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = color;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -length);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    function handlePointer(e) {
+        initAudio();
+        if (mode !== 'digitalToAnalog') return;
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = clientX - (rect.left + rect.width / 2);
+        const y = clientY - (rect.top + rect.height / 2);
+        const dist = Math.sqrt(x*x + y*y);
+
+        if (dist < 20) return;
+
+        let angle = Math.atan2(y, x) * 180 / Math.PI + 90;
+        if (angle < 0) angle += 360;
+
+        if (currentHandStep === 'hour') {
+            let hour12 = Math.round(angle / 30);
+            if (hour12 === 0) hour12 = 12;
+            const isPM = targetTime.hour >= 12;
+            const newHour = (hour12 % 12) + (isPM ? 12 : 0);
+            
+            if (newHour !== userTime.hour) {
+                userTime.hour = newHour;
+                triggerFeedback();
+            }
+        } else {
+            let rawMinute = Math.round(angle / 6) % 60;
+            let snappedMin = Math.round(rawMinute / 10) * 10 % 60;
+            
+            if (snappedMin !== userTime.minute) {
+                userTime.minute = snappedMin;
+                triggerFeedback();
+            }
+        }
+        drawClock();
+    }
+
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handlePointer(e); }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handlePointer(e); }, { passive: false });
+    canvas.addEventListener('mousedown', (e) => {
+        handlePointer(e);
+        const move = (ev) => handlePointer(ev);
+        const up = () => {
+            window.removeEventListener('mousemove', move);
+            window.removeEventListener('mouseup', up);
+        };
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', up);
+    });
+
+    newRound();
+</script>
+</body>
+</html>
