@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Uhrzeit lernen</title>
+    
+    <!-- iOS Vollbild & App-Verhalten -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Uhrzeit">
+    
+    <style>
+        :root {
+            --bg-color: #f2f2f7;
+            --card-bg: #ffffff;
+            --primary-blue: #007aff;
+            --accent-orange: #ff9500;
+            --text-main: #1c1c1e;
+            --text-sub: #8e8e93;
+            --hand-hour: #007aff;
+            --hand-minute: #ff3b30;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "SF Pro Text", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Top Bar */
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .streak-badge {
+            background: rgba(255, 149, 0, 0.15);
+            color: var(--accent-orange);
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .speaker-btn {
+            background: rgba(0, 122, 255, 0.12);
+            color: var(--primary-blue);
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .task-card {
+            text-align: center;
+        }
+
+        .task-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .task-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        /* Digital Display Card */
+        .digital-box {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 10px 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            text-align: center;
+            width: 80%;
+        }
+
+        .digital-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-sub);
+            letter-spacing: 1px;
+        }
+
+        .digital-time {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            font-family: "SF Mono", Menlo, monospace;
+        }
+
+        /* Analog Clock Canvas */
+        .clock-wrapper {
+            position: relative;
+            width: 270px;
+            height: 270px;
+            touch-action: none;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            background: #fff;
+        }
+
+        /* Stepper Controls (Modus 2) */
+        .stepper-container {
+            display: flex;
+            gap: 20px;
+            background: var(--card-bg);
+            padding: 12px 18px;
+            border-radius: 18px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .stepper-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stepper-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .stepper-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-btn {
+            background: #e5e5ea;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .step-val {
+            font-size: 1.1rem;
+            font-weight: 700;
+            width: 44px;
+            text-align: center;
+        }
+
+        /* Check Button */
+        .check-btn {
+            width: 100%;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            font-size: 1.15rem;
+            font-weight: 700;
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 14px rgba(0, 122, 255, 0.35);
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .check-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="streak-badge">
+            <span>🔥</span> <span id="streakCount">0</span>
+        </div>
+        <button class="speaker-btn" onclick="speakTask()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5-1.23L6 6H2v12h4l5.5 4V2zM14 8.86v6.28c1.38-.64 2.33-2.02 2.33-3.14s-.95-2.5-2.33-3.14z"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="task-card">
+        <div class="task-title" id="taskTitle">Stelle die Uhr!</div>
+        <div class="task-subtitle" id="taskSub">Bewege die Zeiger passend zur Zeit.</div>
+    </div>
+
+    <div class="digital-box" id="targetDigitalBox">
+        <div class="digital-label">ZIELZEIT</div>
+        <div class="digital-time" id="digitalTargetTime">14:10</div>
+    </div>
+
+    <div class="clock-wrapper">
+        <canvas id="clockCanvas" width="540" height="540"></canvas>
+    </div>
+
+    <div class="stepper-container" id="digitalInputGroup" style="display: none;">
+        <div class="stepper-group">
+            <span class="stepper-label">Stunde (0–23)</span>
+            <div class="stepper-controls">
+                <button class="step-btn" onclick="changeUserTime('hour', -1)">−</button>
+                <span class="step-val" id="hourVal">12h</span>
+                <button class="step-btn" onclick="changeUserTime('hour', 1)">+</button>
+            </div>
+        </div>
+        <div style="width: 1px; background: #e5e5ea;"></div>
+        <div class="stepper-group">
+            <span class="stepper-label">Minute (10er)</span>
+            <div class="stepper-controls">
+                <button class="step-btn" onclick="changeUserTime('minute', -10)">−</button>
+                <span class="step-val" id="minuteVal">00m</span>
+                <button class="step-btn" onclick="changeUserTime('minute', 10)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="check-btn" onclick="checkAnswer()">Prüfen ✓</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('clockCanvas');
+    const ctx = canvas.getContext('2d');
+    const radius = canvas.width / 2;
+
+    let streak = 0;
+    let mode = 'digitalToAnalog'; // oder 'analogToDigital'
+    let targetTime = { hour: 12, minute: 0 };
+    let userTime = { hour: 12, minute: 0 };
+    let activeDragHand = null;
+
+    // --- Audio Sprachausgabe (Deutsch) ---
+    function speak(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'de-DE';
+        utterance.rate = 0.85; // Kindgerechtes Tempo
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function formatSpokenTime(h, m) {
+        return m === 0 ? `${h} Uhr` : `${h} Uhr ${m}`;
+    }
+
+    function speakTask() {
+        if (mode === 'digitalToAnalog') {
+            speak(`Stelle die Uhr auf ${formatSpokenTime(targetTime.hour, targetTime.minute)}.`);
+        } else {
+            speak("Wie spät ist es auf der Uhr? Stelle die Digitaluhr ein.");
+        }
+    }
+
+    // --- Spielsteuerung ---
+    function newRound() {
+        const validMinutes = [0, 10, 20, 30, 40, 50];
+        targetTime.hour = Math.floor(Math.random() * 24);
+        targetTime.minute = validMinutes[Math.floor(Math.random() * validMinutes.length)];
+        mode = Math.random() > 0.5 ? 'digitalToAnalog' : 'analogToDigital';
+
+        if (mode === 'digitalToAnalog') {
+            userTime = { hour: 12, minute: 0 };
+            document.getElementById('taskTitle').innerText = 'Stelle die Uhr!';
+            document.getElementById('taskSub').innerText = 'Bewege die Zeiger passend zur Zeit.';
+            document.getElementById('targetDigitalBox').style.display = 'block';
+            document.getElementById('digitalInputGroup').style.display = 'none';
+            document.getElementById('digitalTargetTime').innerText = 
+                `${String(targetTime.hour).padStart(2,'0')}:${String(targetTime.minute).padStart(2,'0')}`;
+        } else {
+            userTime = { hour: 0, minute: 0 };
+            document.getElementById('taskTitle').innerText = 'Wie spät ist es?';
+            document.getElementById('taskSub').innerText = 'Tippe die 24h-Digitalzeit ein.';
+            document.getElementById('targetDigitalBox').style.display = 'none';
+            document.getElementById('digitalInputGroup').style.display = 'flex';
+            updateStepperUI();
+        }
+
+        drawClock();
+        setTimeout(speakTask, 300);
+    }
+
+    function changeUserTime(type, delta) {
+        if (type === 'hour') {
+            userTime.hour = (userTime.hour + delta + 24) % 24;
+        } else {
+            userTime.minute = (userTime.minute + delta + 60) % 60;
+        }
+        updateStepperUI();
+        triggerHaptic();
+    }
+
+    function updateStepperUI() {
+        document.getElementById('hourVal').innerText = `${userTime.hour}h`;
+        document.getElementById('minuteVal').innerText = `${String(userTime.minute).padStart(2,'0')}m`;
+    }
+
+    function checkAnswer() {
+        let isCorrect = false;
+        if (mode === 'digitalToAnalog') {
+            const targetMod12 = targetTime.hour % 12;
+            const userMod12 = userTime.hour % 12;
+            isCorrect = (targetMod12 === userMod12 && targetTime.minute === userTime.minute);
+        } else {
+            isCorrect = (targetTime.hour === userTime.hour && targetTime.minute === userTime.minute);
+        }
+
+        if (isCorrect) {
+            streak++;
+            document.getElementById('streakCount').innerText = streak;
+            speak("Super gemacht!");
+            setTimeout(newRound, 1200);
+        } else {
+            streak = 0;
+            document.getElementById('streakCount').innerText = streak;
+            speak("Probier es noch einmal!");
+        }
+    }
+
+    function triggerHaptic() {
+        if (navigator.vibrate) navigator.vibrate(10);
+    }
+
+    // --- Uhr zeichnen (Canvas) ---
+    function drawClock() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(radius, radius);
+
+        // Zifferblatt Markierungen (10er Schritte)
+        for (let i = 0; i < 6; i++) {
+            ctx.rotate((Math.PI / 3));
+            ctx.beginPath();
+            ctx.rect(-3, -radius + 20, 6, 18);
+            ctx.fillStyle = '#c7c7cc';
+            ctx.fill();
+        }
+
+        // Zahlen 1 bis 12
+        ctx.font = 'bold 38px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.fillStyle = '#1c1c1e';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (let num = 1; num <= 12; num++) {
+            const ang = num * Math.PI / 6;
+            ctx.rotate(ang);
+            ctx.translate(0, -radius + 68);
+            ctx.rotate(-ang);
+            ctx.fillText(num.toString(), 0, 0);
+            ctx.rotate(ang);
+            ctx.translate(0, radius - 68);
+            ctx.rotate(-ang);
+        }
+
+        const time = (mode === 'digitalToAnalog') ? userTime : targetTime;
+        const hourVal = (time.hour % 12) + time.minute / 60;
+        const hourAngle = (hourVal * Math.PI / 6);
+        const minuteAngle = (time.minute * Math.PI / 30);
+
+        // Stundenzeiger (Blau)
+        drawHand(hourAngle, radius * 0.48, 14, '#007aff');
+        // Minutenzeiger (Rot)
+        drawHand(minuteAngle, radius * 0.72, 9, '#ff3b30');
+
+        // Achse
+        ctx.beginPath();
+        ctx.arc(0, 0, 12, 0, 2 * Math.PI);
+        ctx.fillStyle = '#1c1c1e';
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function drawHand(angle, length, width, color) {
+        ctx.save();
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = color;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -length);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // --- Touch / Drag Steuerung ---
+    function handlePointer(e) {
+        if (mode !== 'digitalToAnalog') return;
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = clientX - (rect.left + rect.width / 2);
+        const y = clientY - (rect.top + rect.height / 2);
+        const dist = Math.sqrt(x*x + y*y);
+
+        let angle = Math.atan2(y, x) * 180 / Math.PI + 90;
+        if (angle < 0) angle += 360;
+
+        if (dist > (rect.width / 2) * 0.5) {
+            // Außen: Minutenzeiger (in 10er Schritten einrasten)
+            let rawMinute = Math.round(angle / 6) % 60;
+            let snappedMin = Math.round(rawMinute / 10) * 10 % 60;
+            if (snappedMin !== userTime.minute) {
+                userTime.minute = snappedMin;
+                triggerHaptic();
+            }
+        } else if (dist > 15) {
+            // Innen: Stundenzeiger
+            let hour12 = Math.round(angle / 30);
+            if (hour12 === 0) hour12 = 12;
+            const isPM = userTime.hour >= 12;
+            userTime.hour = (hour12 % 12) + (isPM ? 12 : 0);
+            triggerHaptic();
+        }
+        drawClock();
+    }
+
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handlePointer(e); }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handlePointer(e); }, { passive: false });
+    canvas.addEventListener('mousedown', (e) => {
+        handlePointer(e);
+        const move = (ev) => handlePointer(ev);
+        const up = () => {
+            window.removeEventListener('mousemove', move);
+            window.removeEventListener('mouseup', up);
+        };
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', up);
+    });
+
+    // Start
+    newRound();
+</script>
+</body>
+</html>
