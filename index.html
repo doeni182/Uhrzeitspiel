@@ -8,11 +8,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Uhrzeit">
-    <meta name="theme-color" content="#3DDDE3">
+    <meta name="theme-color" content="#E2F7F8">
     
     <style>
         :root {
-            --app-bg: #3DDDE3;       /* Fester Hintergrund */
+            --app-bg: #E2F7F8;       /* Neue Hintergrundfarbe */
             --clock-day: #FAE7E2;    /* Warmes Helles Pastell für Tagzeiten */
             --clock-night: #C2D2E9;  /* Pastellblau für Nachtzeiten */
             --text-title: #111111;
@@ -336,7 +336,7 @@
             text-align: center;
         }
 
-        /* Prüfen Button mit Konfetti Canvas */
+        /* Prüfen Button mit Konfetti Canvas & Shake-Animation */
         .check-btn {
             position: relative;
             width: 100%;
@@ -355,12 +355,25 @@
             overflow: hidden;
             flex-shrink: 0;
             margin-bottom: 2px;
-            transition: background 0.3s ease, transform 0.15s ease;
+            transition: background 0.3s ease, border-color 0.3s ease, transform 0.15s ease;
         }
 
         .check-btn.success-glow {
             background: linear-gradient(135deg, rgba(52, 199, 89, 0.45) 0%, rgba(52, 199, 89, 0.2) 100%);
             border-color: rgba(52, 199, 89, 0.8);
+        }
+
+        .check-btn.error-shake {
+            animation: shakeButton 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+            background: linear-gradient(135deg, rgba(255, 59, 48, 0.35) 0%, rgba(255, 59, 48, 0.15) 100%);
+            border-color: rgba(255, 59, 48, 0.7);
+        }
+
+        @keyframes shakeButton {
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
         }
 
         #btnConfettiCanvas {
@@ -646,6 +659,18 @@
         fireEl.classList.add('fire-pop');
     }
 
+    // --- Button Fehler-Animation ---
+    function triggerButtonError() {
+        const btn = document.getElementById('checkButton');
+        btn.classList.remove('error-shake');
+        void btn.offsetWidth;
+        btn.classList.add('error-shake');
+
+        setTimeout(() => {
+            btn.classList.remove('error-shake');
+        }, 500);
+    }
+
     // --- Button-Konfetti ---
     const confettiColors = ['#4F05F8', '#DEC0DF', '#34c759', '#ff9500', '#ff3b30', '#ffcc00', '#007aff'];
 
@@ -890,6 +915,7 @@
         } else {
             streak = 0;
             document.getElementById('streakCount').innerText = streak;
+            triggerButtonError();
             playWrongSound();
             speak("Probier es noch einmal!");
         }
@@ -982,7 +1008,7 @@
         // Stundenzeiger (Lila #4F05F8)
         drawHandDirect(cx, cy, hourAngle, radius * 0.46, isHourActive ? 14 : 9, isHourActive ? '#4F05F8' : 'rgba(79, 5, 248, 0.28)');
         
-        // Minutenzeiger (Flieder #DEC0DF mit dunkler Kontur für optimale Lesbarkeit)
+        // Minutenzeiger (Flieder #DEC0DF mit dunkler Kontur)
         drawHandDirect(cx, cy, minuteAngle, radius * 0.72, isMinuteActive ? 10 : 6, isMinuteActive ? '#DEC0DF' : 'rgba(222, 192, 223, 0.35)', isMinuteActive ? '#8a508c' : 'transparent');
 
         // Mittelpunkt
@@ -1007,7 +1033,6 @@
         ctx.lineTo(cx + Math.cos(angle) * length, cy + Math.sin(angle) * length);
         ctx.stroke();
 
-        // Feine Kontur für hellere Farben
         if (outlineColor !== 'transparent') {
             ctx.beginPath();
             ctx.lineWidth = 1.2;
